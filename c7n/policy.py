@@ -749,6 +749,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             "Six_Hours",
             "Twelve_Hours",
             "TwentyFour_Hours"]},
+        ignoreconfigsupportcheck={'type': 'boolean'},
         rinherit=LambdaMode.schema)
 
     def validate(self):
@@ -757,7 +758,8 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             raise PolicyValidationError(
                 "policy:%s config-poll-rule schedule required" % (
                     self.policy.name))
-        if self.policy.resource_manager.resource_type.config_type:
+        if not self.policy.data['mode'].get('ignoreconfigsupportcheck') \
+                and self.policy.resource_manager.resource_type.config_type:
             raise PolicyValidationError(
                 "resource:%s fully supported by config and should use mode: config-rule" % (
                     self.policy.resource_type))
