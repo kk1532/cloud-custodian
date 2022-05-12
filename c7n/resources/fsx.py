@@ -356,8 +356,12 @@ class ConsecutiveBackups(Filter):
     annotation = 'c7n:FSxBackups'
 
     def process_resource_set(self, client, resources):
-        ontap_fids = [r['FileSystemId'] for r in resources if r['FileSystemType'] == 'ONTAP']
-        nonontap_fids = [r['FileSystemId'] for r in resources if r['FileSystemType'] != 'ONTAP']
+        ontap_fids, nonontap_fids = [], []
+        for r in resources:
+            if r['FileSystemType'] == 'ONTAP':
+                ontap_fids.append(r['FileSystemId'])
+            else:
+                nonontap_fids.append(r['FileSystemId'])
         vpaginator = client.get_paginator('describe_volumes')
         bpaginator = client.get_paginator('describe_backups')
 
