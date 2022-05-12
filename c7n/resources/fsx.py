@@ -337,7 +337,7 @@ class KmsFilterFsxBackup(KmsRelatedFilter):
 
 @FSx.filter_registry.register('consecutive-backups')
 class ConsecutiveBackups(Filter):
-    """Returns consecutive daily Fsx backups, which are equal to/or greater than n days.
+    """Returns consecutive daily FSx backups, which are equal to/or greater than n days.
     :Example:
     .. code-block:: yaml
             policies:
@@ -353,11 +353,11 @@ class ConsecutiveBackups(Filter):
                                                       'minimum': 1},
                          required=['days'])
     permissions = ('fsx:DescribeBackups', 'fsx:DescribeVolumes',)
-    annotation = 'c7n:FsxBackups'
+    annotation = 'c7n:FSxBackups'
 
     def process_resource_set(self, client, resources):
-        ontap_fid = [r['FileSystemId'] for r in resources if r['FileSystemType'] == 'ONTAP']
-        nonontap_fid = [r['FileSystemId'] for r in resources if r['FileSystemType'] != 'ONTAP']
+        ontap_fids = [r['FileSystemId'] for r in resources if r['FileSystemType'] == 'ONTAP']
+        nonontap_fids = [r['FileSystemId'] for r in resources if r['FileSystemType'] != 'ONTAP']
         vpaginator = client.get_paginator('describe_volumes')
         bpaginator = client.get_paginator('describe_backups')
 
@@ -365,29 +365,29 @@ class ConsecutiveBackups(Filter):
         ontap_volumes = vpaginator.paginate(Filters=[
             {
                 'Name': 'file-system-id',
-                'Values': ontap_fid,
+                'Values': ontap_fids,
             }]).build_full_result().get('Volumes', [])
-        ontap_vid = [v['VolumeId'] for v in ontap_volumes]
+        ontap_vids = [v['VolumeId'] for v in ontap_volumes]
 
         bpaginator.PAGE_ITERATOR_CLS = RetryPageIterator
         ontap_backups = bpaginator.paginate(Filters=[
             {
                 'Name': 'volume-id',
-                'Values': ontap_vid,
+                'Values': ontap_vids,
             }]).build_full_result().get('Backups', [])
         nonontap_backups = bpaginator.paginate(Filters=[
             {
                 'Name': 'file-system-id',
-                'Values': nonontap_fid,
+                'Values': nonontap_fids,
             }]).build_full_result().get('Backups', [])
 
-        inst_map = {}
+        fid_backups = {}
         for ontap in ontap_backups:
-            inst_map.setdefault(ontap['Volume']['FileSystemId'], []).append(ontap)
+            fid_backups.setdefault(ontap['Volume']['FileSystemId'], []).append(ontap)
         for nonontap in nonontap_backups:
-            inst_map.setdefault(nonontap['FileSystem']['FileSystemId'], []).append(nonontap)
+            fid_backups.setdefault(nonontap['FileSystem']['FileSystemId'], []).append(nonontap)
         for r in resources:
-            r[self.annotation] = inst_map.get(r['FileSystemId'], [])
+            r[self.annotation] = fid_backups.get(r['FileSystemId'], [])
 
     def process(self, resources, event=None):
         client = local_session(self.manager.session_factory).client('fsx')
