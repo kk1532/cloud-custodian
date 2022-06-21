@@ -821,17 +821,16 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
         token = event.get('resultToken')
         cfg_rule_name = event['configRuleName']
 
-        if self.policy.data['mode'].get('ignore-support-check'):
-            try:
-                r = client.delete_evaluation_results(
-                    ConfigRuleName=cfg_rule_name
-                )
-                if r['ResponseMetadata']['HTTPStatusCode'] == 200:
-                    self.policy.log.info(
-                        "Evaluation clean up done on policy:%s" %
-                        self.policy.name)
-            except Exception as e:
-                raise e
+        try:
+            r = client.delete_evaluation_results(
+                ConfigRuleName=cfg_rule_name
+            )
+            if r['ResponseMetadata']['HTTPStatusCode'] == 200:
+                self.policy.log.info(
+                    "Evaluation clean up done on policy:%s" %
+                    self.policy.name)
+        except Exception as e:
+            raise e
 
         matched_resources = set()
         for r in PullMode.run(self):
