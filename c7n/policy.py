@@ -802,6 +802,35 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
                 'policy:%s resource:%s does not have a cloudformation type'
                 ' and is there-fore not supported by config-poll-rule'))
 
+    def get_obsolete_evaluations(self, client, cfg_rule_name, evaluations):
+        """Get list of evaluations that are no longer applicable due to resources being deleted
+        """
+        latest_resource_ids = set()
+        for latest_eval in evaluations:
+            latest_resource_ids.add(latest_eval['ComplianceResourceId'])
+
+        obsolete_evaluations = []
+        paginator = client.get_paginator('get_compliance_details_by_config_rule')
+        old_evals = paginator.paginate(
+            ConfigRuleName=cfg_rule_name,
+            ComplianceTypes=['COMPLIANT', 'NON_COMPLIANT'],
+            PaginationConfig={'PageSize': 100}).build_full_result().get('EvaluationResults', [])
+
+        for old_eval in old_evals:
+            old_resource_id = old_eval['EvaluationResultIdentifier']
+            ['EvaluationResultQualifier']['ResourceId']
+            if old_resource_id not in latest_resource_ids:
+                obsolete_evaluation = {
+                    'ComplianceResourceType': old_eval['EvaluationResultIdentifier']
+                    ['EvaluationResultQualifier']['ResourceType'],
+                    'ComplianceResourceId': old_eval['EvaluationResultIdentifier']
+                    ['EvaluationResultQualifier']['ResourceId'],
+                    'Annotation': 'The rule does not apply.',
+                    'ComplianceType': 'NOT_APPLICABLE',
+                    'OrderingTimestamp': datetime.now()}
+                obsolete_evaluations.append(obsolete_evaluation)
+        return obsolete_evaluations
+
     def _get_client(self):
         return utils.local_session(
             self.policy.session_factory).client('config')
@@ -821,17 +850,6 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
         token = event.get('resultToken')
         cfg_rule_name = event['configRuleName']
 
-        try:
-            r = client.delete_evaluation_results(
-                ConfigRuleName=cfg_rule_name
-            )
-            if r['ResponseMetadata']['HTTPStatusCode'] == 200:
-                self.policy.log.info(
-                    "Evaluation clean up done on policy:%s" %
-                    self.policy.name)
-        except Exception as e:
-            raise e
-
         matched_resources = set()
         for r in PullMode.run(self):
             matched_resources.add(r[resource_id])
@@ -841,7 +859,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             if r[resource_id] not in matched_resources:
                 unmatched_resources.add(r[resource_id])
 
-        evaluations = [dict(
+        non_compliant_evals = [dict(
             ComplianceResourceType=resource_type,
             ComplianceResourceId=r,
             ComplianceType='NON_COMPLIANT',
@@ -849,10 +867,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             Annotation='The resource is not compliant with policy:%s.' % (
                 self.policy.name))
             for r in matched_resources]
-        if evaluations and token:
-            self.put_evaluations(client, token, evaluations)
-
-        evaluations = [dict(
+        compliant_evals = [dict(
             ComplianceResourceType=resource_type,
             ComplianceResourceId=r,
             ComplianceType='COMPLIANT',
@@ -860,8 +875,13 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             Annotation='The resource is compliant with policy:%s.' % (
                 self.policy.name))
             for r in unmatched_resources]
+        evaluations = non_compliant_evals + compliant_evals
+        obsolete_evaluations = self.get_obsolete_evaluations(client, cfg_rule_name, evaluations)
+        evaluations = evaluations + obsolete_evaluations
+
         if evaluations and token:
             self.put_evaluations(client, token, evaluations)
+
         return list(matched_resources)
 
 
