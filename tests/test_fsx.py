@@ -411,7 +411,7 @@ class TestFSx(BaseTest):
         self.assertEqual(len(resources), 1)
 
     def test_fsx_backup_count_filter(self):
-        factory = self.replay_flight_data("test_fsx_backup_count_filter")
+        session_factory = self.replay_flight_data("test_fsx_backup_count_filter")
         p = self.load_policy(
             {
                 "name": "fsx-backup-count-filter",
@@ -419,7 +419,7 @@ class TestFSx(BaseTest):
                 "filters": [{"type": "consecutive-backups", "days": 2}],
             },
             config={'region': 'us-west-2'},
-            session_factory=factory,
+            session_factory=session_factory,
         )
         resources = p.run()
         self.assertEqual(len(resources), 3)

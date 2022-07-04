@@ -349,47 +349,54 @@ class ConsecutiveBackups(Filter):
                 actions:
                   - notify
     """
-    schema = type_schema('consecutive-backups', days={'type': 'number',
-                                                      'minimum': 1},
+    schema = type_schema('consecutive-backups',
+                         days={'type': 'number', 'minimum': 1},
                          required=['days'])
     permissions = ('fsx:DescribeBackups', 'fsx:DescribeVolumes',)
     annotation = 'c7n:FSxBackups'
 
+    def describe_backups(self, client, name=None, filters=[]):
+        desc_backups = []
+        try:
+            paginator = client.get_paginator('describe_backups')
+            paginator.PAGE_ITERATOR_CLS = RetryPageIterator
+            desc_backups = paginator.paginate(Filters=[
+                {
+                    'Name': name,
+                    'Values': filters,
+                }]).build_full_result().get('Backups', [])
+        except Exception as err:
+            self.log.warning(
+                'Unable to describe backups for ids: %s - %s' % (filters, err))
+        return desc_backups
+
     def process_resource_set(self, client, resources):
         ontap_fids, nonontap_fids = [], []
+        fid_backups = {}
+
         for r in resources:
             if r['FileSystemType'] == 'ONTAP':
                 ontap_fids.append(r['FileSystemId'])
             else:
                 nonontap_fids.append(r['FileSystemId'])
-        vpaginator = client.get_paginator('describe_volumes')
-        bpaginator = client.get_paginator('describe_backups')
-
-        vpaginator.PAGE_ITERATOR_CLS = RetryPageIterator
-        ontap_volumes = vpaginator.paginate(Filters=[
-            {
-                'Name': 'file-system-id',
-                'Values': ontap_fids,
-            }]).build_full_result().get('Volumes', [])
-        ontap_vids = [v['VolumeId'] for v in ontap_volumes]
-
-        bpaginator.PAGE_ITERATOR_CLS = RetryPageIterator
-        ontap_backups = bpaginator.paginate(Filters=[
-            {
-                'Name': 'volume-id',
-                'Values': ontap_vids,
-            }]).build_full_result().get('Backups', [])
-        nonontap_backups = bpaginator.paginate(Filters=[
-            {
-                'Name': 'file-system-id',
-                'Values': nonontap_fids,
-            }]).build_full_result().get('Backups', [])
-
-        fid_backups = {}
-        for ontap in ontap_backups:
-            fid_backups.setdefault(ontap['Volume']['FileSystemId'], []).append(ontap)
-        for nonontap in nonontap_backups:
-            fid_backups.setdefault(nonontap['FileSystem']['FileSystemId'], []).append(nonontap)
+        if ontap_fids:
+            ontap_volumes = client.describe_volumes(Filters=[
+                {
+                    'Name': 'file-system-id',
+                    'Values': ontap_fids,
+                }])
+            ontap_vids = [v['VolumeId'] for v in ontap_volumes['Volumes']]
+            ontap_backups = self.describe_backups(client, 'volume-id', ontap_vids)
+            if ontap_backups:
+                for ontap in ontap_backups:
+                    fid_backups.setdefault(ontap['Volume']
+                                           ['FileSystemId'], []).append(ontap)
+        if nonontap_fids:
+            nonontap_backups = self.describe_backups(client, 'file-system-id', nonontap_fids)
+            if nonontap_backups:
+                for nonontap in nonontap_backups:
+                    fid_backups.setdefault(nonontap['FileSystem']
+                                           ['FileSystemId'], []).append(nonontap)
         for r in resources:
             r[self.annotation] = fid_backups.get(r['FileSystemId'], [])
 

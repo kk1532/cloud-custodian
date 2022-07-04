@@ -7,52 +7,52 @@
                 "CreationTime": {
                     "__class__": "datetime",
                     "year": 2022,
-                    "month": 3,
-                    "day": 8,
-                    "hour": 11,
-                    "minute": 43,
-                    "second": 1,
-                    "microsecond": 743000
+                    "month": 6,
+                    "day": 7,
+                    "hour": 13,
+                    "minute": 5,
+                    "second": 36,
+                    "microsecond": 297000
                 },
-                "FileSystemId": "fs-04e28b1857bb55220",
+                "FileSystemId": "fs-04e75277bcf51008f",
                 "FileSystemType": "ONTAP",
                 "Lifecycle": "AVAILABLE",
                 "StorageCapacity": 1024,
                 "StorageType": "SSD",
-                "VpcId": "vpc-01bcbc0844",
+                "VpcId": "vpc-0a67cf38519bb5258",
                 "SubnetIds": [
-                    "subnet-0d814711374b7fd85",
-                    "subnet-0d53f8a3fda99fbd5"
+                    "subnet-0a812f6cc69880c57",
+                    "subnet-0b481be2b3028616b"
                 ],
                 "NetworkInterfaceIds": [
-                    "eni-0418e8355aa68bf85",
-                    "eni-0a3817d8c3f7a6e55"
+                    "eni-0262dfcb26773864b",
+                    "eni-03b7a839fa633edc7"
                 ],
-                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/a10ed3ae-7429-4d97-b3af-2f38772a6497",
-                "ResourceARN": "arn:aws:fsx:us-west-2:644160558196:file-system/fs-04e28b1857bb55220",
+                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/9b2b5d4d-d785-4106-b28c-c461906c1362",
+                "ResourceARN": "arn:aws:fsx:us-west-2:644160558196:file-system/fs-04e75277bcf51008f",
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "test-ontap"
+                        "Value": "fsx-ontap-test"
                     }
                 ],
                 "OntapConfiguration": {
                     "AutomaticBackupRetentionDays": 7,
-                    "DailyAutomaticBackupStartTime": "12:00",
+                    "DailyAutomaticBackupStartTime": "08:00",
                     "DeploymentType": "MULTI_AZ_1",
                     "EndpointIpAddressRange": "198.19.255.0/24",
                     "Endpoints": {
                         "Intercluster": {
-                            "DNSName": "ontapintercluster.fs-04e28b1857bb55220.fsx.us-west-2.amazonaws.com",
+                            "DNSName": "intercluster.fs-04e75277bcf51008f.fsx.us-west-2.amazonaws.com",
                             "IpAddresses": [
-                                "10.0.0.228",
-                                "10.0.1.14"
+                                "10.0.4.102",
+                                "10.0.6.169"
                             ]
                         },
                         "Management": {
-                            "DNSName": "ontapmanagement.fs-04e28b1857bb55220.fsx.us-west-2.amazonaws.com",
+                            "DNSName": "management.fs-04e75277bcf51008f.fsx.us-west-2.amazonaws.com",
                             "IpAddresses": [
-                                "198.19.255.9"
+                                "198.19.255.38"
                             ]
                         }
                     },
@@ -60,12 +60,12 @@
                         "Mode": "AUTOMATIC",
                         "Iops": 3072
                     },
-                    "PreferredSubnetId": "subnet-0d814721d34b7fd84",
+                    "PreferredSubnetId": "subnet-0a812f6cc69880c57",
                     "RouteTableIds": [
-                        "rtb-0090d3d4ed1f5bf06"
+                        "rtb-05f2e889a327fded8"
                     ],
                     "ThroughputCapacity": 128,
-                    "WeeklyMaintenanceStartTime": "7:09:00"
+                    "WeeklyMaintenanceStartTime": "2:09:00"
                 }
             },
             {
@@ -73,82 +73,32 @@
                 "CreationTime": {
                     "__class__": "datetime",
                     "year": 2022,
-                    "month": 3,
-                    "day": 8,
-                    "hour": 11,
-                    "minute": 16,
-                    "second": 8,
-                    "microsecond": 47000
+                    "month": 6,
+                    "day": 7,
+                    "hour": 12,
+                    "minute": 44,
+                    "second": 49,
+                    "microsecond": 695000
                 },
-                "FileSystemId": "fs-0743f13f94de55220",
-                "FileSystemType": "LUSTRE",
-                "Lifecycle": "AVAILABLE",
-                "StorageCapacity": 1200,
-                "StorageType": "SSD",
-                "VpcId": "vpc-01bcbc0844",
-                "SubnetIds": [
-                    "subnet-0c3827dd7541e1b"
-                ],
-                "NetworkInterfaceIds": [
-                    "eni-0360add3f2d494",
-                    "eni-08096f9c65a7d0"
-                ],
-                "DNSName": "fs-0743f13f94de55220.fsx.us-west-2.amazonaws.com",
-                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/a10ed3ae-7429-4d97-b3af-2f38772a6497",
-                "ResourceARN": "arn:aws:fsx:us-west-2:644160558196:file-system/fs-0743f13f94de55220",
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "test-lustre"
-                    }
-                ],
-                "LustreConfiguration": {
-                    "WeeklyMaintenanceStartTime": "2:12:00",
-                    "DeploymentType": "PERSISTENT_2",
-                    "PerUnitStorageThroughput": 125,
-                    "MountName": "skpzbbmv",
-                    "DailyAutomaticBackupStartTime": "08:00",
-                    "AutomaticBackupRetentionDays": 7,
-                    "CopyTagsToBackups": false,
-                    "DataCompressionType": "NONE",
-                    "LogConfiguration": {
-                        "Level": "WARN_ERROR",
-                        "Destination": "arn:aws:logs:us-west-2:644160558196:log-group:/aws/fsx/lustre:log-stream:datarepo_fs-0743f13f94de55220"
-                    }
-                },
-                "FileSystemTypeVersion": "2.12"
-            },
-            {
-                "OwnerId": "644160558196",
-                "CreationTime": {
-                    "__class__": "datetime",
-                    "year": 2022,
-                    "month": 3,
-                    "day": 10,
-                    "hour": 18,
-                    "minute": 38,
-                    "second": 36,
-                    "microsecond": 281000
-                },
-                "FileSystemId": "fs-0b71d060807b55220",
+                "FileSystemId": "fs-004e50ac24c350e4a",
                 "FileSystemType": "OPENZFS",
                 "Lifecycle": "AVAILABLE",
                 "StorageCapacity": 64,
                 "StorageType": "SSD",
-                "VpcId": "vpc-01bcbc0844",
+                "VpcId": "vpc-0a67cf38519bb5258",
                 "SubnetIds": [
-                    "subnet-0d814714b7fd84"
+                    "subnet-0380d823077227456"
                 ],
                 "NetworkInterfaceIds": [
-                    "eni-0109d5ef04db15"
+                    "eni-0d7f2328526ab79e3"
                 ],
-                "DNSName": "fs-0b71d060807b55220.fsx.us-west-2.amazonaws.com",
-                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/a10ed3ae-7429-4d97-b3af-2f38772a6497",
-                "ResourceARN": "arn:aws:fsx:us-west-2:644160558196:file-system/fs-0b71d060807b55220",
+                "DNSName": "fs-004e50ac24c350e4a.fsx.us-west-2.amazonaws.com",
+                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/9b2b5d4d-d785-4106-b28c-c461906c1362",
+                "ResourceARN": "arn:aws:fsx:us-west-2:644160558196:file-system/fs-004e50ac24c350e4a",
                 "Tags": [
                     {
                         "Key": "Name",
-                        "Value": "test-openzfs"
+                        "Value": "fsx-openzfs-test"
                     }
                 ],
                 "OpenZFSConfiguration": {
@@ -158,13 +108,63 @@
                     "DailyAutomaticBackupStartTime": "11:00",
                     "DeploymentType": "SINGLE_AZ_1",
                     "ThroughputCapacity": 64,
-                    "WeeklyMaintenanceStartTime": "5:08:30",
+                    "WeeklyMaintenanceStartTime": "4:13:30",
                     "DiskIopsConfiguration": {
                         "Mode": "AUTOMATIC",
                         "Iops": 192
                     },
-                    "RootVolumeId": "fsvol-0c5d1c2594de8e"
+                    "RootVolumeId": "fsvol-033dd863ca2f1bc22"
                 }
+            },
+            {
+                "OwnerId": "644160558196",
+                "CreationTime": {
+                    "__class__": "datetime",
+                    "year": 2022,
+                    "month": 6,
+                    "day": 7,
+                    "hour": 12,
+                    "minute": 46,
+                    "second": 39,
+                    "microsecond": 447000
+                },
+                "FileSystemId": "fs-0614308ae2f2ed661",
+                "FileSystemType": "LUSTRE",
+                "Lifecycle": "AVAILABLE",
+                "StorageCapacity": 1200,
+                "StorageType": "SSD",
+                "VpcId": "vpc-0a67cf38519bb5258",
+                "SubnetIds": [
+                    "subnet-058f583452ba7f5b9"
+                ],
+                "NetworkInterfaceIds": [
+                    "eni-0d8b0861c735e6e5e",
+                    "eni-05e36bbe5b62b8bec"
+                ],
+                "DNSName": "fs-0614308ae2f2ed661.fsx.us-west-2.amazonaws.com",
+                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/9b2b5d4d-d785-4106-b28c-c461906c1362",
+                "ResourceARN": "arn:aws:fsx:us-west-2:644160558196:file-system/fs-0614308ae2f2ed661",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "fsx-lustre-test"
+                    }
+                ],
+                "LustreConfiguration": {
+                    "WeeklyMaintenanceStartTime": "4:06:30",
+                    "DeploymentType": "PERSISTENT_2",
+                    "PerUnitStorageThroughput": 125,
+                    "MountName": "aalp3bmv",
+                    "DailyAutomaticBackupStartTime": "13:00",
+                    "AutomaticBackupRetentionDays": 7,
+                    "CopyTagsToBackups": false,
+                    "DataCompressionType": "NONE",
+                    "LogConfiguration": {
+                        "Level": "WARN_ERROR",
+                        "Destination": "arn:aws:logs:us-west-2:644160558196:log-group:/aws/fsx/lustre:log-stream:datarepo_fs-0614308ae2f2ed661"
+                    }
+                },
+                "FileSystemTypeVersion": "2.12"
             }
         ],
         "ResponseMetadata": {}
