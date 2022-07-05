@@ -16,44 +16,7 @@
                 "OwnerId": "644160558196",
                 "AssignIpv6AddressOnCreation": false,
                 "Ipv6CidrBlockAssociationSet": [],
-                "Tags": [
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "PrivateSubnetAz2"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-Subnet-1SWN6LD0YR4QN"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-Subnet-1SWN6LD0YR4QN/601edac0-dfcc-11ec-ab17-06ff8c278c11"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "PrivateSubnetAz2"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "subnet"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "SubnetPrivate2"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Presentation and Business Logic tier, for example:  App/Web on EC2, Lambda, EMR, etc."
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    }
-                ],
+                "Tags": [],
                 "SubnetArn": "arn:aws:ec2:us-west-2:644160558196:subnet/subnet-034f3d20e1400bae7",
                 "EnableDns64": false,
                 "Ipv6Native": false,

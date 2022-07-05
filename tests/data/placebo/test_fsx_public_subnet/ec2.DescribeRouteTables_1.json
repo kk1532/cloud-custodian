@@ -42,48 +42,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via NAT Gateway, S3 via VPC Endpoint and if VPN enabled will have routes to QDC/LVDC datacenters"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "PrivateRouteTable3"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Private"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "PrivateRouteTable3"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTablePrivate3"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -115,48 +74,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC but if VPN enabled will also have routes to QDC/LVDC datacenters"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "DataRouteTable2"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableData2"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Data"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "DataRouteTable2"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -188,48 +106,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "DataRouteTable1"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC but if VPN enabled will also have routes to QDC/LVDC datacenters"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "DataRouteTable1"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Data"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableData1"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -273,48 +150,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Egress"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via Internet Gateway and S3 via VPC Endpoint"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "EgressRouteTable1"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "EgressRouteTable1"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableEgress1"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -358,48 +194,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via Internet Gateway and S3 via VPC Endpoint"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "IngressRouteTable1"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Ingress"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableIngress1"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "IngressRouteTable1"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -431,48 +226,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "Type",
-                        "Value": "Data"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableData3"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC but if VPN enabled will also have routes to QDC/LVDC datacenters"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "DataRouteTable3"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "DataRouteTable3"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -516,48 +270,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "EgressRouteTable2"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via Internet Gateway and S3 via VPC Endpoint"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Egress"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableEgress2"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "EgressRouteTable2"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -601,48 +314,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": "PrivateRouteTable2"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via NAT Gateway, S3 via VPC Endpoint and if VPN enabled will have routes to QDC/LVDC datacenters"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTablePrivate2"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "PrivateRouteTable2"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Private"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -686,48 +358,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via NAT Gateway, S3 via VPC Endpoint and if VPN enabled will have routes to QDC/LVDC datacenters"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "PrivateRouteTable1"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTablePrivate1"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "PrivateRouteTable1"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Private"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -771,48 +402,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "EgressRouteTable3"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Egress"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via Internet Gateway and S3 via VPC Endpoint"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "EgressRouteTable3"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableEgress3"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -881,48 +471,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableIngress3"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via Internet Gateway and S3 via VPC Endpoint"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "IngressRouteTable3"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Ingress"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "IngressRouteTable3"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             },
@@ -966,48 +515,7 @@
                         "State": "active"
                     }
                 ],
-                "Tags": [
-                    {
-                        "Key": "intuit:vpc:component:description",
-                        "Value": "Routes to local VPC, Internet via Internet Gateway and S3 via VPC Endpoint"
-                    },
-                    {
-                        "Key": "intuit:vpc:env",
-                        "Value": "learning"
-                    },
-                    {
-                        "Key": "aws:cloudformation:logical-id",
-                        "Value": "RouteTableIngress2"
-                    },
-                    {
-                        "Key": "Type",
-                        "Value": "Ingress"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-name",
-                        "Value": "Intuit-vpc-1-RouteTable-XSWL3F26MGTO"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:name",
-                        "Value": "IngressRouteTable2"
-                    },
-                    {
-                        "Key": "intuit:vpc:component:type",
-                        "Value": "route"
-                    },
-                    {
-                        "Key": "aws:cloudformation:stack-id",
-                        "Value": "arn:aws:cloudformation:us-west-2:644160558196:stack/Intuit-vpc-1-RouteTable-XSWL3F26MGTO/ff711940-dfcb-11ec-aa58-02901ec18915"
-                    },
-                    {
-                        "Key": "intuit:cfn:version",
-                        "Value": "2.7.8"
-                    },
-                    {
-                        "Key": "Name",
-                        "Value": "IngressRouteTable2"
-                    }
-                ],
+                "Tags": [],
                 "VpcId": "vpc-0848662b041928e4e",
                 "OwnerId": "644160558196"
             }
