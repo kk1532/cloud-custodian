@@ -3,7 +3,8 @@
     "data": {
         "StreamNames": [
             "dev1",
-            "dev2"
+            "dev2",
+            "dev3"
         ],
         "HasMoreStreams": false,
         "ResponseMetadata": {}

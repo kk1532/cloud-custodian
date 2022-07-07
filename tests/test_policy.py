@@ -1436,6 +1436,9 @@ class ConfigModeTest(BaseTest):
 
         def record_requests(Evaluations, ResultToken):
             for e in Evaluations:
+                if e['ComplianceResourceId'] == "dev3":
+                    e['ComplianceType'] = 'NOT_APPLICABLE'
+                    e['Annotation'] = 'The rule does not apply.'
                 requests.append(e)
 
         cmock.put_evaluations.side_effect = record_requests
@@ -1458,17 +1461,23 @@ class ConfigModeTest(BaseTest):
         event = event_data('poll-evaluation.json', 'config')
         results = p.push(event, None)
         self.assertEqual(results, ['dev2'])
+        requests = sorted(requests, key=lambda r: r['ComplianceResourceId'])
         self.assertEqual(
             requests,
-            [{'Annotation': 'The resource is not compliant with policy:kin-poll.',
+            [{'Annotation': 'The resource is compliant with policy:kin-poll.',
+              'ComplianceResourceId': 'dev1',
+              'ComplianceResourceType': 'AWS::Kinesis::Stream',
+              'ComplianceType': 'COMPLIANT',
+              'OrderingTimestamp': '2020-05-03T13:55:44.576Z'},
+             {'Annotation': 'The resource is not compliant with policy:kin-poll.',
               'ComplianceResourceId': 'dev2',
               'ComplianceResourceType': 'AWS::Kinesis::Stream',
               'ComplianceType': 'NON_COMPLIANT',
               'OrderingTimestamp': '2020-05-03T13:55:44.576Z'},
-             {'Annotation': 'The resource is compliant with policy:kin-poll.',
-              'ComplianceResourceId': 'dev1',
+             {'Annotation': 'The rule does not apply.',
+              'ComplianceResourceId': 'dev3',
               'ComplianceResourceType': 'AWS::Kinesis::Stream',
-              'ComplianceType': 'COMPLIANT',
+              'ComplianceType': 'NOT_APPLICABLE',
               'OrderingTimestamp': '2020-05-03T13:55:44.576Z'}])
 
     related_resource_policy = {
