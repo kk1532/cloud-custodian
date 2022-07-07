@@ -1435,7 +1435,8 @@ class ConfigModeTest(BaseTest):
         requests = []
 
         def record_requests(Evaluations, ResultToken):
-            requests.append(Evaluations)
+            for e in Evaluations:
+                requests.append(e)
 
         cmock.put_evaluations.side_effect = record_requests
         cmock.put_evaluations.return_value = {}
@@ -1459,16 +1460,16 @@ class ConfigModeTest(BaseTest):
         self.assertEqual(results, ['dev2'])
         self.assertEqual(
             requests,
-            [[{'Annotation': 'The resource is not compliant with policy:kin-poll.',
-               'ComplianceResourceId': 'dev2',
-               'ComplianceResourceType': 'AWS::Kinesis::Stream',
-               'ComplianceType': 'NON_COMPLIANT',
-               'OrderingTimestamp': '2020-05-03T13:55:44.576Z'}],
-             [{'Annotation': 'The resource is compliant with policy:kin-poll.',
-               'ComplianceResourceId': 'dev1',
-               'ComplianceResourceType': 'AWS::Kinesis::Stream',
-               'ComplianceType': 'COMPLIANT',
-               'OrderingTimestamp': '2020-05-03T13:55:44.576Z'}]])
+            [{'Annotation': 'The resource is not compliant with policy:kin-poll.',
+              'ComplianceResourceId': 'dev2',
+              'ComplianceResourceType': 'AWS::Kinesis::Stream',
+              'ComplianceType': 'NON_COMPLIANT',
+              'OrderingTimestamp': '2020-05-03T13:55:44.576Z'},
+             {'Annotation': 'The resource is compliant with policy:kin-poll.',
+              'ComplianceResourceId': 'dev1',
+              'ComplianceResourceType': 'AWS::Kinesis::Stream',
+              'ComplianceType': 'COMPLIANT',
+              'OrderingTimestamp': '2020-05-03T13:55:44.576Z'}])
 
     related_resource_policy = {
         "name": "vpc-flow-logs",

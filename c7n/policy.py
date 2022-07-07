@@ -817,14 +817,12 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             PaginationConfig={'PageSize': 100}).build_full_result().get('EvaluationResults', [])
 
         for old_eval in old_evals:
-            old_resource_id = old_eval['EvaluationResultIdentifier']
-            ['EvaluationResultQualifier']['ResourceId']
+            eval_res_qual = old_eval['EvaluationResultIdentifier']['EvaluationResultQualifier']
+            old_resource_id = eval_res_qual['ResourceId']
             if old_resource_id not in latest_resource_ids:
                 obsolete_evaluation = {
-                    'ComplianceResourceType': old_eval['EvaluationResultIdentifier']
-                    ['EvaluationResultQualifier']['ResourceType'],
-                    'ComplianceResourceId': old_eval['EvaluationResultIdentifier']
-                    ['EvaluationResultQualifier']['ResourceId'],
+                    'ComplianceResourceType': eval_res_qual['ResourceType'],
+                    'ComplianceResourceId': old_resource_id,
                     'Annotation': 'The rule does not apply.',
                     'ComplianceType': 'NOT_APPLICABLE',
                     'OrderingTimestamp': datetime.now()}
