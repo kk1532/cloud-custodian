@@ -802,7 +802,8 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
                 'policy:%s resource:%s does not have a cloudformation type'
                 ' and is there-fore not supported by config-poll-rule'))
 
-    def get_obsolete_evaluations(self, client, cfg_rule_name, evaluations):
+    @staticmethod
+    def get_obsolete_evaluations(client, cfg_rule_name, evaluations):
         """Get list of evaluations that are no longer applicable due to resources being deleted
         """
         latest_resource_ids = set()
