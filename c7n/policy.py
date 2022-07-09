@@ -803,7 +803,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
                 ' and is there-fore not supported by config-poll-rule'))
 
     @staticmethod
-    def get_obsolete_evaluations(client, cfg_rule_name, evaluations):
+    def get_obsolete_evaluations(client, cfg_rule_name, ordering_ts, evaluations):
         """Get list of evaluations that are no longer applicable due to resources being deleted
         """
         latest_resource_ids = set()
@@ -826,7 +826,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
                     'ComplianceResourceId': old_resource_id,
                     'Annotation': 'The rule does not apply.',
                     'ComplianceType': 'NOT_APPLICABLE',
-                    'OrderingTimestamp': datetime.now()}
+                    'OrderingTimestamp': ordering_ts}
                 obsolete_evaluations.append(obsolete_evaluation)
         return obsolete_evaluations
 
@@ -848,6 +848,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
         client = self._get_client()
         token = event.get('resultToken')
         cfg_rule_name = event['configRuleName']
+        ordering_ts = cfg_event['notificationCreationTime']
 
         matched_resources = set()
         for r in PullMode.run(self):
@@ -862,7 +863,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             ComplianceResourceType=resource_type,
             ComplianceResourceId=r,
             ComplianceType='NON_COMPLIANT',
-            OrderingTimestamp=cfg_event['notificationCreationTime'],
+            OrderingTimestamp=ordering_ts,
             Annotation='The resource is not compliant with policy:%s.' % (
                 self.policy.name))
             for r in matched_resources]
@@ -870,12 +871,13 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             ComplianceResourceType=resource_type,
             ComplianceResourceId=r,
             ComplianceType='COMPLIANT',
-            OrderingTimestamp=cfg_event['notificationCreationTime'],
+            OrderingTimestamp=ordering_ts,
             Annotation='The resource is compliant with policy:%s.' % (
                 self.policy.name))
             for r in unmatched_resources]
         evaluations = non_compliant_evals + compliant_evals
-        obsolete_evaluations = self.get_obsolete_evaluations(client, cfg_rule_name, evaluations)
+        obsolete_evaluations = self.get_obsolete_evaluations(
+            client, cfg_rule_name, ordering_ts, evaluations)
         evaluations = evaluations + obsolete_evaluations
 
         if evaluations and token:
