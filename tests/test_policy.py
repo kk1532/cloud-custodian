@@ -1435,8 +1435,7 @@ class ConfigModeTest(BaseTest):
         requests = []
 
         def record_requests(Evaluations, ResultToken):
-            for e in Evaluations:
-                requests.append(e)
+            requests.extend(Evaluations)
 
         mocked_evaluations = {
             'EvaluationResults': [
