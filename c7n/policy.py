@@ -22,6 +22,7 @@ from c7n.registry import PluginRegistry
 from c7n.provider import clouds, get_resource_class
 from c7n import deprecated, utils
 from c7n.version import version
+from c7n.query import RetryPageIterator
 
 log = logging.getLogger('c7n.policy')
 
@@ -812,6 +813,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
 
         obsolete_evaluations = []
         paginator = client.get_paginator('get_compliance_details_by_config_rule')
+        paginator.PAGE_ITERATOR_CLS = RetryPageIterator
         old_evals = paginator.paginate(
             ConfigRuleName=cfg_rule_name,
             ComplianceTypes=['COMPLIANT', 'NON_COMPLIANT'],
