@@ -8,6 +8,7 @@ import c7n.resources.fsx
 from c7n.testing import mock_datetime_now
 from .common import BaseTest
 
+
 class TestFSx(BaseTest):
     def test_fsx_resource(self):
         session_factory = self.replay_flight_data('test_fsx_resource')
