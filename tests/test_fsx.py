@@ -1,9 +1,12 @@
 # Copyright The Cloud Custodian Authors.
 # SPDX-License-Identifier: Apache-2.0
 
-from .common import BaseTest
 import time
+from dateutil.parser import parse as date_parse
 
+import c7n.resources.fsx
+from c7n.testing import mock_datetime_now
+from .common import BaseTest
 
 class TestFSx(BaseTest):
     def test_fsx_resource(self):
@@ -421,7 +424,8 @@ class TestFSx(BaseTest):
             config={'region': 'us-west-2'},
             session_factory=session_factory,
         )
-        resources = p.run()
+        with mock_datetime_now(date_parse("2022-07-04"), c7n.resources.fsx):
+            resources = p.run()
         self.assertEqual(len(resources), 3)
 
     def test_fsx_igw_subnet(self):
