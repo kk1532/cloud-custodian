@@ -2,15 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
+from datetime import datetime, timedelta
+
 from c7n.manager import resources
 from c7n.query import (
     QueryResourceManager, TypeInfo, DescribeSource, RetryPageIterator)
 from c7n.actions import BaseAction
 from c7n.tags import Tag, TagDelayedAction, RemoveTag, coalesce_copy_user_tags, TagActionFilter
 from c7n.utils import type_schema, local_session, chunks
-from c7n.filters.kms import KmsRelatedFilter
 from c7n.filters import Filter
-from datetime import datetime, timedelta
+from c7n.filters.kms import KmsRelatedFilter
+from c7n.filters.vpc import SubnetFilter
 
 
 class DescribeFSx(DescribeSource):
@@ -421,3 +423,9 @@ class ConsecutiveBackups(Filter):
             if expected_dates.issubset(backup_dates):
                 results.append(r)
         return results
+
+
+@FSx.filter_registry.register('subnet')
+class Subnet(SubnetFilter):
+
+    RelatedIdsExpression = 'SubnetIds[]'
