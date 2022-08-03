@@ -372,15 +372,10 @@ class ConsecutiveBackups(Filter):
                 'Unable to describe backups for ids: %s - %s' % (filters, err))
         return desc_backups
 
-    def process_resource_set(self, client, resources):
-        ontap_fids, nonontap_fids = [], []
-        fid_backups = {}
-
-        for r in resources:
-            if r['FileSystemType'] == 'ONTAP':
-                ontap_fids.append(r['FileSystemId'])
-            else:
-                nonontap_fids.append(r['FileSystemId'])
+    def ontap_process_resource_set(self, client, resources):
+        ontap_fid_backups = {}
+        ontap_backups = []
+        ontap_fids = [r['FileSystemId'] for r in resources]
         if ontap_fids:
             ontap_volumes = client.describe_volumes(Filters=[
                 {
@@ -388,13 +383,22 @@ class ConsecutiveBackups(Filter):
                     'Values': ontap_fids,
                 }])
             ontap_vids = [v['VolumeId'] for v in ontap_volumes['Volumes']]
-            ontap_backups = self.describe_backups(client, 'volume-id', ontap_vids)
+            for ovid in chunks(ontap_vids, 20):
+                ontap_backups = self.describe_backups(client, 'volume-id', ovid)
             if ontap_backups:
                 for ontap in ontap_backups:
-                    fid_backups.setdefault(ontap['Volume']
+                    ontap_fid_backups.setdefault(ontap['Volume']
                                            ['FileSystemId'], []).append(ontap)
+        for r in resources:
+            r[self.annotation] = ontap_fid_backups.get(r['FileSystemId'], [])
+
+    def nonontap_process_resource_set(self, client, resources):
+        fid_backups = {}
+        nonontap_backups = []
+        nonontap_fids = [r['FileSystemId'] for r in resources]
         if nonontap_fids:
-            nonontap_backups = self.describe_backups(client, 'file-system-id', nonontap_fids)
+            for nonontap_fid in chunks(nonontap_fids, 20):
+                nonontap_backups = self.describe_backups(client, 'file-system-id', nonontap_fid)
             if nonontap_backups:
                 for nonontap in nonontap_backups:
                     fid_backups.setdefault(nonontap['FileSystem']
@@ -405,15 +409,24 @@ class ConsecutiveBackups(Filter):
     def process(self, resources, event=None):
         client = local_session(self.manager.session_factory).client('fsx')
         results = []
+        ontap_resource_set, nonontap_resource_set = [], []
         retention = self.data.get('days')
         utcnow = datetime.utcnow()
         expected_dates = set()
         for days in range(1, retention + 1):
             expected_dates.add((utcnow - timedelta(days=days)).strftime('%Y-%m-%d'))
 
-        for resource_set in chunks(
-                [r for r in resources if self.annotation not in r], 50):
-            self.process_resource_set(client, resource_set)
+        for r in resources:
+            if self.annotation not in r:
+                if r['FileSystemType'] == 'ONTAP':
+                    ontap_resource_set.append(r)
+                else:
+                    nonontap_resource_set.append(r)
+
+        if ontap_resource_set:
+            self.ontap_process_resource_set(client, ontap_resource_set)
+        if nonontap_resource_set:
+            self.nonontap_process_resource_set(client, nonontap_resource_set)
 
         for r in resources:
             backup_dates = set()
