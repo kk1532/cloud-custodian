@@ -59,7 +59,7 @@ from c7n import deprecated, tags
 from c7n.tags import universal_augment
 
 from c7n.utils import (
-    local_session, type_schema, get_retry, chunks, snapshot_identifier)
+    local_session, type_schema, get_retry, chunks, snapshot_identifier, merge_dict_list)
 from c7n.resources.kms import ResourceKmsKeyAlias
 from c7n.resources.securityhub import OtherResourcePostFinding
 
@@ -121,6 +121,19 @@ class RDS(QueryResourceManager):
 
     filter_registry = filters
     action_registry = actions
+    policy_data = dict()
+
+    def __init__(self, ctx, data):
+        super(RDS, self).__init__(ctx, data)
+        if self.data:
+            RDS.policy_data = self.data
+
+    def resources(self, query=None):
+        if query is None and 'query' in RDS.policy_data:
+            query = merge_dict_list(RDS.policy_data['query'])
+        elif query is None:
+            query = {}
+        return super(RDS, self).resources(query=query)
 
     source_mapping = {
         'describe': DescribeRDS,
