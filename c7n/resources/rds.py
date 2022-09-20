@@ -123,9 +123,6 @@ class RDS(QueryResourceManager):
     action_registry = actions
     policy_data = dict()
 
-    def __init__(self, ctx, data):
-        super(RDS, self).__init__(ctx, data)
-
     def resources(self, query=None):
         if self.data:
             RDS.policy_data = self.data
