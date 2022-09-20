@@ -125,10 +125,10 @@ class RDS(QueryResourceManager):
 
     def __init__(self, ctx, data):
         super(RDS, self).__init__(ctx, data)
-        if self.data:
-            RDS.policy_data = self.data
 
     def resources(self, query=None):
+        if self.data:
+            RDS.policy_data = self.data
         if query is None and 'query' in RDS.policy_data:
             query = merge_dict_list(RDS.policy_data['query'])
         elif query is None:
