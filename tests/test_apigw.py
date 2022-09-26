@@ -625,6 +625,22 @@ class TestRestStage(BaseTest):
         results = p.push(event, None)
         self.assertEqual(len(results), 1)
 
+    def test_rest_stage_arn_addition(self):
+        factory = self.replay_flight_data("test_rest_stage_arn_addition")
+        stagearn = 'arn:aws:apigateway:us-west-2::/restapis/atgw0gohmh/stages/test'
+        p = self.load_policy(
+            {
+                "name": "config_id-apigw-rest-stage-check",
+                "resource": "rest-stage",
+            },
+            session_factory=factory,
+            config={'region': 'us-west-2'},
+            validate=False
+        )
+        results = p.run()
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['stageArn'], stagearn)
+
 
 class TestRestClientCertificate(BaseTest):
 
