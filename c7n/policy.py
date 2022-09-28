@@ -873,11 +873,12 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
         ordering_ts = cfg_event['notificationCreationTime']
 
         matched_resources = set()
+        unmatched_resources = set()
         for r in PullMode.run(self):
             matched_resources.add(r[resource_id])
-        unmatched_resources = set()
         for r in self.policy.resource_manager.get_resource_manager(
-                self.policy.resource_type).resources():
+                self.policy.resource_type,
+                self.policy.data).resources():
             if r[resource_id] not in matched_resources:
                 unmatched_resources.add(r[resource_id])
 

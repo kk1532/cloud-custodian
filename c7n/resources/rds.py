@@ -121,13 +121,10 @@ class RDS(QueryResourceManager):
 
     filter_registry = filters
     action_registry = actions
-    policy_data = dict()
 
     def resources(self, query=None):
-        if self.data:
-            RDS.policy_data = self.data
-        if query is None and 'query' in RDS.policy_data:
-            query = merge_dict_list(RDS.policy_data['query'])
+        if query is None and 'query' in self.data:
+            query = merge_dict_list(self.data['query'])
         elif query is None:
             query = {}
         return super(RDS, self).resources(query=query)
