@@ -20,6 +20,7 @@ class SesStatistics(QueryResourceManager):
         date = 'Timestamp'
         metrics_namespace = 'AWS/SES'
 
+
 @SesStatistics.filter_registry.register('agg-stats')
 class SesAggStats(ValueFilter):
     """This filter aggregates the individual timestamp stats into single report.

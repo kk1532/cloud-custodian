@@ -54,4 +54,3 @@ class TestSesStatistics(BaseTest):
         for r in resources:
             self.assertTrue(r['Date'])
             self.assertTrue(r['OwnerId'])
-
