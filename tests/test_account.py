@@ -1245,3 +1245,28 @@ class AccountDataEvents(BaseTest):
 
         self.assertEqual(
             resources[0]["c7n:lake-cross-account-s3"], ["testarena.com"])
+
+    def test_ses_agg_send_stats(self):
+        factory = self.replay_flight_data('test_ses_agg_send_stats')
+        p = self.load_policy({
+            'name': 'ses-agg-send-stats-policy',
+            'resource': 'account',
+            'filters': [{"type": "ses-agg-send-stats"}]},
+            config={'region': 'us-west-2'},
+            session_factory=factory)
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+
+    def test_ses_consecutive_send_stats(self):
+        factory = self.replay_flight_data('test_ses_consecutive_send_stats')
+        p = self.load_policy({
+            'name': 'ses-consecutive-stats',
+            'resource': 'account',
+            'filters': [{"type": "ses-consecutive-send-stats", "days": 2}]},
+            config={'region': 'us-west-2'},
+            session_factory=factory)
+        resources = p.run()
+        self.assertEqual(len(resources), 2)
+        for r in resources:
+            self.assertTrue(r['Date'])
+            self.assertTrue(r['OwnerId'])

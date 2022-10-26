@@ -1885,3 +1885,114 @@ class LakeformationFilter(Filter):
             return False
         account[self.annotation] = list(cross_account)
         return True
+
+
+@filters.register('ses-agg-send-stats')
+class SesAggStats(ValueFilter):
+    """This filter aggregates the individual timestamp stats into single report.
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: ses-aggregated-send-stats-policy
+                resource: account
+                filters:
+                  - type: ses-agg-send-stats
+    """
+
+    schema = type_schema('ses-agg-send-stats', rinherit=ValueFilter.schema)
+
+    permissions = ("ses:GetSendStatistics",)
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('ses')
+        get_send_stats = client.get_send_statistics()
+        account = self.manager.config.account_id
+
+        results = []
+        if get_send_stats:
+            resource_counter = {'OwnerId': account,
+                                'DeliveryAttempts': 0,
+                                'Bounces': 0,
+                                'Complaints': 0,
+                                'Rejects': 0,
+                                'BounceRate': 0}
+            for r in get_send_stats['SendDataPoints']:
+                if r:
+                    resource_counter['DeliveryAttempts'] += r['DeliveryAttempts']
+                    resource_counter['Bounces'] += r['Bounces']
+                    resource_counter['Complaints'] += r['Complaints']
+                    resource_counter['Rejects'] += r['Rejects']
+            resource_counter['BounceRate'] = round(
+                (resource_counter['Bounces'] /
+                 resource_counter['DeliveryAttempts']) * 100)
+            results.append(resource_counter)
+
+        return results
+
+
+@filters.register('ses-consecutive-send-stats')
+class SesConsecutiveStats(Filter):
+    """Filters consecutive days on statistic as days based. By default 2 days.
+
+    :example:
+
+    .. code-block:: yaml
+
+            policies:
+              - name: ses-consecutive-send-stats-policy
+                resource: account
+                filters:
+                  - type: ses-consecutive-send-stats
+                    days: 2
+    """
+    schema = type_schema('ses-consecutive-send-stats', days={'type': 'number', 'minimum': 2},
+                         required=['days'])
+
+    permissions = ("ses:GetSendStatistics",)
+
+    def process(self, resources, event=None):
+        client = local_session(self.manager.session_factory).client('ses')
+        get_send_stats = client.get_send_statistics()
+
+        account = self.manager.config.account_id
+        results = []
+        check_days = self.data.get('days', 2)
+        utcnow = datetime.datetime.utcnow()
+        expected_dates = set()
+
+        for days in range(1, check_days + 1):
+            expected_dates.add((utcnow - datetime.timedelta(days=days)).strftime('%Y-%m-%d'))
+
+        if get_send_stats:
+            data = []
+            tmp_data = {}
+            for r in get_send_stats['SendDataPoints']:
+                if r['Timestamp']:
+                    ts = r['Timestamp'].strftime('%Y-%m-%d')
+                    ts_set = {ts}
+                    if ts_set.issubset(expected_dates):
+                        try:
+                            if ts not in tmp_data.keys():
+                                tmp_data.update({ts: {'DeliveryAttempts': 0,
+                                                      'Bounces': 0,
+                                                      'Complaints': 0,
+                                                      'Rejects': 0}})
+                            tmp_data[ts]['DeliveryAttempts'] += r['DeliveryAttempts']
+                            tmp_data[ts]['Bounces'] += r['Bounces']
+                            tmp_data[ts]['Complaints'] += r['Complaints']
+                            tmp_data[ts]['Rejects'] += r['Rejects']
+                        except KeyError as e:
+                            raise e
+            data.append(tmp_data)
+            for d in data:
+                if d:
+                    for k, v in d.items():
+                        d[k]['BounceRate'] = int(
+                            round((d[k]['Bounces'] / d[k]['DeliveryAttempts']) * 100))
+                        d[k]['Date'] = k
+                        d[k]['OwnerId'] = account
+                        results.append(d[k])
+        return results
