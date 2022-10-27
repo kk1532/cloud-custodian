@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import functools
 import jmespath
+import re
 from botocore.exceptions import ClientError
 
 from concurrent.futures import as_completed
@@ -683,27 +684,27 @@ class WafV2Enabled(Filter):
     permissions = ('wafv2:ListWebACLs',)
 
     def process(self, resources, event=None):
-        target_acl = self.data.get('web-acl')
+        target_acl = self.data.get('web-acl', '')
         state = self.data.get('state', False)
 
         results = []
         wafs = self.manager.get_resource_manager('wafv2').resources(augment=False)
         waf_name_arn_map = {w['Name']: w['ARN'] for w in wafs}
-        target_acl_id = waf_name_arn_map.get(target_acl, target_acl)
+        target_acl_ids = [v for k, v in waf_name_arn_map.items() if re.match(target_acl, k)]
         for r in resources:
             r_web_acl_arn = r.get('webAclArn')
             if state:
-                if target_acl_id is None and r_web_acl_arn and \
-                        r_web_acl_arn in waf_name_arn_map.values():
+                if target_acl_ids is None and r_web_acl_arn and \
+                        r_web_acl_arn in target_acl_ids:
                     results.append(r)
-                elif target_acl_id and r_web_acl_arn == target_acl_id:
+                elif target_acl_ids and r_web_acl_arn in target_acl_ids:
                     results.append(r)
             else:
-                if target_acl_id is None and (
+                if target_acl_ids is None and (
                         not r_web_acl_arn or r_web_acl_arn and r_web_acl_arn
-                        not in waf_name_arn_map.values()):
+                        not in target_acl_ids):
                     results.append(r)
-                elif target_acl_id and r_web_acl_arn != target_acl_id:
+                elif target_acl_ids and r_web_acl_arn not in target_acl_ids:
                     results.append(r)
         return results
 
