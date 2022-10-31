@@ -642,7 +642,7 @@ class SetWaf(BaseAction):
     def process(self, resources):
         wafs = self.manager.get_resource_manager('waf-regional').resources(augment=False)
         name_id_map = {w['Name']: w['WebACLId'] for w in wafs}
-        target_acl = self.data.get('web-acl')
+        target_acl = self.data.get('web-acl', '')
         target_acl_id = name_id_map.get(target_acl, target_acl)
         state = self.data.get('state', True)
         if state and target_acl_id not in name_id_map.values():
@@ -686,11 +686,13 @@ class WafV2Enabled(Filter):
     def process(self, resources, event=None):
         target_acl = self.data.get('web-acl', '')
         state = self.data.get('state', False)
-
         results = []
+
         wafs = self.manager.get_resource_manager('wafv2').resources(augment=False)
         waf_name_arn_map = {w['Name']: w['ARN'] for w in wafs}
-        target_acl_ids = [v for k, v in waf_name_arn_map.items() if re.match(target_acl, k)]
+
+        target_acl_ids = [v for k, v in waf_name_arn_map.items() if
+                          re.match(target_acl, k)]
         for r in resources:
             r_web_acl_arn = r.get('webAclArn')
             if state:
@@ -700,12 +702,16 @@ class WafV2Enabled(Filter):
                 elif target_acl_ids and r_web_acl_arn in target_acl_ids:
                     results.append(r)
             else:
+                if not target_acl_ids:
+                    target_acl_ids = [target_acl]
+
                 if target_acl_ids is None and (
                         not r_web_acl_arn or r_web_acl_arn and r_web_acl_arn
                         not in target_acl_ids):
                     results.append(r)
                 elif target_acl_ids and r_web_acl_arn not in target_acl_ids:
                     results.append(r)
+
         return results
 
 
@@ -743,9 +749,17 @@ class SetWafv2(BaseAction):
     permissions = ('wafv2:AssociateWebACL', 'wafv2:ListWebACLs')
 
     schema = type_schema(
-        'set-wafv2', required=['web-acl'], **{
+        'set-wafv2', **{
             'web-acl': {'type': 'string'},
             'state': {'type': 'boolean'}})
+
+    retry = staticmethod(get_retry((
+        'ThrottlingException',
+        'RequestLimitExceeded',
+        'Throttled',
+        'ThrottledException',
+        'Throttling',
+        'Client.RequestLimitExceeded')))
 
     def validate(self):
         found = False
@@ -763,23 +777,33 @@ class SetWafv2(BaseAction):
     def process(self, resources):
         wafs = self.manager.get_resource_manager('wafv2').resources(augment=False)
         name_id_map = {w['Name']: w['ARN'] for w in wafs}
-        target_acl = self.data.get('web-acl')
-        target_acl_id = name_id_map.get(target_acl, target_acl)
         state = self.data.get('state', True)
+        target_acl_arn = ''
 
-        if state and target_acl_id not in name_id_map.values():
-            raise ValueError("invalid web acl: %s" % (target_acl_id))
+        if state:
+            target_acl = self.data.get('web-acl', '')
+            target_acl_ids = [v for k, v in name_id_map.items() if
+                              re.match(target_acl, k)]
+            if len(target_acl_ids) != 1 or \
+                    ('arn' not in target_acl_ids[0]):
+                raise ValueError(f'{target_acl} matching to none or the '
+                                 f'multiple web-acls')
+            target_acl_arn = target_acl_ids[0]
+
+        if state and target_acl_arn not in name_id_map.values():
+            raise ValueError("invalid web acl: %s" % target_acl_arn)
 
         client = utils.local_session(self.manager.session_factory).client('wafv2')
 
         for r in resources:
             r_arn = self.manager.get_arns([r])[0]
             if state:
-                client.associate_web_acl(
-                    WebACLArn=target_acl_id, ResourceArn=r_arn)
+                self.retry(client.associate_web_acl,
+                           WebACLArn=target_acl_arn,
+                           ResourceArn=r_arn)
             else:
-                client.disassociate_web_acl(
-                    WebACLArn=target_acl_id, ResourceArn=r_arn)
+                self.retry(client.disassociate_web_acl,
+                           ResourceArn=r_arn)
 
 
 @RestResource.filter_registry.register('rest-integration')

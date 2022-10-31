@@ -3,6 +3,7 @@
 from botocore.exceptions import ClientError
 
 from .common import BaseTest, event_data
+from c7n.exceptions import PolicyValidationError
 
 
 class TestRestAccount(BaseTest):
@@ -475,11 +476,40 @@ class TestRestStage(BaseTest):
         )
         self.assertEqual(len(resources), 2)
 
+    def test_reststage_wafv2_filter_regex(self):
+        factory = self.replay_flight_data("test_rest_stage_wafv2_regex")
+
         p = self.load_policy(
             {
                 "name": "wafv2-apigw",
                 "resource": "rest-stage",
-                "filters": [{"type": "wafv2-enabled", "web-acl": ".*v\\d", "state": True}],
+                "filters": [{"type": "wafv2-enabled", "state": False}],
+            },
+            session_factory=factory,
+        )
+        resources = p.run()
+        self.assertEqual(len(resources), 0)
+
+        p = self.load_policy(
+            {
+                "name": "wafv2-apigw",
+                "resource": "rest-stage",
+                "filters": [{"type": "wafv2-enabled",
+                             "web-acl": "FMManagedWebACLV2-FMS-T.*",
+                             "state": True}],
+            },
+            session_factory=factory,
+            config={'region': 'us-west-2'})
+        resources = p.run()
+        self.assertEqual(len(resources), 1)
+
+        p = self.load_policy(
+            {
+                "name": "wafv2-apigw",
+                "resource": "rest-stage",
+                "filters": [{"type": "wafv2-enabled",
+                             "web-acl": "testv2",
+                             "state": False}],
             },
             session_factory=factory,
         )
@@ -556,6 +586,64 @@ class TestRestStage(BaseTest):
         )
         resources = p.run()
         self.assertEqual(len(resources), 3)
+
+    def test_reststage_action_wafv2_not_found(self):
+        self.assertRaises(
+            PolicyValidationError,
+            self.load_policy,
+            {
+                "name": "wafv2-apigw-set",
+                "resource": "rest-stage",
+                "filters": [
+                    {"state": False}
+                ],
+                "actions": [
+                    {"type": "set-wafv2", "web-acl": "FMManagedWebACLV2-FMS-T.*"}
+                ],
+            },
+        )
+
+    def test_reststage_action_wafv2_multiple_match(self):
+        factory = self.replay_flight_data(
+            "test_rest_stage_wafv2_set_action_regex_match")
+
+        p = self.load_policy(
+            {
+                "name": "wafv2-apigw-set",
+                "resource": "rest-stage",
+                "filters": [{"type": "wafv2-enabled",
+                             "state": True}],
+                "actions": [{"type": "set-wafv2",
+                             "web-acl": "FMManagedWebACLV2-FMS-A.*"}],
+            },
+            session_factory=factory,
+            config={'region': 'us-west-2'})
+
+        with self.assertRaises(ValueError) as ctx:
+            p.run()
+            self.assertTrue(
+                'matching to none or the multiple webacls'
+                in str(ctx.exception))
+
+    def test_reststage_action_wafv2_regex_disassociate_webacl(self):
+        factory = self.replay_flight_data(
+            "test_rest_stage_wafv2_ds_action_regex")
+
+        policy = self.load_policy(
+            {
+                "name": "wafv2-apigw-set",
+                "resource": "rest-stage",
+                "filters": [{"type": "wafv2-enabled",
+                             "web-acl": "FMManagedWebACLV2-FMS-T.*",
+                             "state": True}],
+                "actions": [
+                    {"type": "set-wafv2", "state": False}
+                ],
+            },
+            session_factory=factory,
+            config={'region': 'us-west-2'})
+        response = policy.run()
+        self.assertEqual(response[0]['stageName'], 'test1')
 
     def test_wafv2_to_wafregional_with_acl(self):
         factory = self.replay_flight_data("test_rest_stage_waf")
