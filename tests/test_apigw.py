@@ -603,6 +603,24 @@ class TestRestStage(BaseTest):
             },
         )
 
+    def test_reststage_action_wafv2_state_true(self):
+        self.assertRaises(
+            PolicyValidationError,
+            self.load_policy,
+            {
+                "name": "wafv2-apigw-set",
+                "resource": "rest-stage",
+                "filters": [
+                    {"type": "wafv2-enabled",
+                     "state": True,
+                     "web-acl": "FMManagedWebACLV2-FMS.*"}
+                ],
+                "actions": [
+                    {"type": "set-wafv2", "state": True}
+                ],
+            },
+        )
+
     def test_reststage_action_wafv2_multiple_match(self):
         factory = self.replay_flight_data(
             "test_rest_stage_wafv2_set_action_regex_match")

@@ -772,6 +772,12 @@ class SetWafv2(BaseAction):
             raise PolicyValidationError(
                 "set-wafv2 should be used in conjunction with wafv2-enabled or waf-enabled \
                     filter on %s" % (self.manager.data,))
+        if self.data.get('state'):
+            if 'web-acl' not in self.data:
+                raise PolicyValidationError((
+                    "set-wafv2 filter parameter state is true, "
+                    "requires `web-acl` on %s" % (self.manager.data,)))
+
         return self
 
     def process(self, resources):
@@ -784,8 +790,7 @@ class SetWafv2(BaseAction):
             target_acl = self.data.get('web-acl', '')
             target_acl_ids = [v for k, v in name_id_map.items() if
                               re.match(target_acl, k)]
-            if len(target_acl_ids) != 1 or \
-                    ('arn' not in target_acl_ids[0]):
+            if len(target_acl_ids) != 1:
                 raise ValueError(f'{target_acl} matching to none or the '
                                  f'multiple web-acls')
             target_acl_arn = target_acl_ids[0]
