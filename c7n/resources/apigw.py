@@ -280,9 +280,14 @@ class DescribeRestStage(query.ChildDescribeSource):
 
     def augment(self, resources):
         results = []
+        rest_apis = self.manager.get_resource_manager(
+            'rest-api').resources()
         # Using capture parent, changes the protocol
         for parent_id, r in resources:
             r['restApiId'] = parent_id
+            for rest_api in rest_apis:
+                if rest_api['id'] == parent_id:
+                    r['restApiType'] = rest_api['endpointConfiguration']['types']
             r['stageArn'] = "arn:aws:{service}:{region}::" \
                             "/restapis/{rest_api_id}/stages/" \
                             "{stage_name}".format(
@@ -696,20 +701,14 @@ class WafV2Enabled(Filter):
         for r in resources:
             r_web_acl_arn = r.get('webAclArn')
             if state:
-                if target_acl_ids is None and r_web_acl_arn and \
-                        r_web_acl_arn in target_acl_ids:
+                if not target_acl and r_web_acl_arn:
                     results.append(r)
-                elif target_acl_ids and r_web_acl_arn in target_acl_ids:
+                elif target_acl and r_web_acl_arn in target_acl_ids:
                     results.append(r)
             else:
-                if not target_acl_ids:
-                    target_acl_ids = [target_acl]
-
-                if target_acl_ids is None and (
-                        not r_web_acl_arn or r_web_acl_arn and r_web_acl_arn
-                        not in target_acl_ids):
+                if not target_acl and not r_web_acl_arn:
                     results.append(r)
-                elif target_acl_ids and r_web_acl_arn not in target_acl_ids:
+                elif target_acl and r_web_acl_arn not in target_acl_ids:
                     results.append(r)
 
         return results

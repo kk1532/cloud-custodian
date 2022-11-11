@@ -585,7 +585,7 @@ class TestRestStage(BaseTest):
             session_factory=factory,
         )
         resources = p.run()
-        self.assertEqual(len(resources), 3)
+        self.assertEqual(len(resources), 1)
 
     def test_reststage_action_wafv2_not_found(self):
         self.assertRaises(
@@ -662,6 +662,25 @@ class TestRestStage(BaseTest):
             config={'region': 'us-west-2'})
         response = policy.run()
         self.assertEqual(response[0]['stageName'], 'test1')
+
+    def test_rest_stage_get_restapi_type(self):
+        factory = self.replay_flight_data("test_rest_stage_get_restapi_type")
+
+        policy = self.load_policy(
+            {
+                "name": "wafv2-apigw-get-restapi",
+                "resource": "rest-stage",
+                "filters": [{"type": "wafv2-enabled",
+                             "web-acl": "FMManagedWebACLV2-FMS-T.*",
+                             "state": True}],
+                "actions": [
+                    {"type": "set-wafv2", "state": False}
+                ],
+            },
+            session_factory=factory,
+            config={'region': 'us-west-2'})
+        response = policy.run()
+        self.assertEqual(response[0]['restApiType'], ['REGIONAL'])
 
     def test_wafv2_to_wafregional_with_acl(self):
         factory = self.replay_flight_data("test_rest_stage_waf")
