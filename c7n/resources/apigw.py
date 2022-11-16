@@ -701,14 +701,10 @@ class WafV2Enabled(Filter):
         for r in resources:
             r_web_acl_arn = r.get('webAclArn')
             if state:
-                if not target_acl and r_web_acl_arn:
-                    results.append(r)
-                elif target_acl and r_web_acl_arn in target_acl_ids:
+                if r_web_acl_arn and r_web_acl_arn in target_acl_ids:
                     results.append(r)
             else:
-                if not target_acl and not r_web_acl_arn:
-                    results.append(r)
-                elif target_acl and r_web_acl_arn not in target_acl_ids:
+                if not r_web_acl_arn and r_web_acl_arn not in target_acl_ids:
                     results.append(r)
 
         return results
