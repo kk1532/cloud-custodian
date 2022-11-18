@@ -8,10 +8,11 @@ from c7n.utils import local_session
 from c7n.resources import account
 from c7n.testing import mock_datetime_now
 
+
 import datetime
 from dateutil import parser, tz
 import json
-import mock
+from unittest import mock
 import time
 
 from .common import functional
@@ -1265,7 +1266,9 @@ class AccountDataEvents(BaseTest):
             'filters': [{"type": "ses-consecutive-send-stats", "days": 2}]},
             config={'region': 'us-west-2'},
             session_factory=factory)
-        resources = p.run()
+        # resources = p.run()
+        with mock_datetime_now(parser.parse("2022-10-26T00:00:00+00:00"), datetime):
+            resources = p.run()
         self.assertEqual(len(resources), 2)
         for r in resources:
             self.assertTrue(r['Date'])
