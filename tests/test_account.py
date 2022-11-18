@@ -1266,7 +1266,6 @@ class AccountDataEvents(BaseTest):
             'filters': [{"type": "ses-consecutive-send-stats", "days": 2}]},
             config={'region': 'us-west-2'},
             session_factory=factory)
-        # resources = p.run()
         with mock_datetime_now(parser.parse("2022-10-26T00:00:00+00:00"), datetime):
             resources = p.run()
         self.assertEqual(len(resources), 2)
