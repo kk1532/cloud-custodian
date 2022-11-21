@@ -1259,16 +1259,15 @@ class AccountDataEvents(BaseTest):
         self.assertEqual(len(resources), 1)
 
     def test_ses_consecutive_send_stats(self):
-        factory = self.replay_flight_data('test_ses_consecutive_send_stats')
+        factory = self.replay_flight_data('test_ses_agg_send_stats')
         p = self.load_policy({
             'name': 'ses-consecutive-stats',
             'resource': 'account',
-            'filters': [{"type": "ses-consecutive-send-stats", "days": 2}]},
+            'filters': [{"type": "ses-send-stats", "days": 2}]},
             config={'region': 'us-west-2'},
             session_factory=factory)
         with mock_datetime_now(parser.parse("2022-10-26T00:00:00+00:00"), datetime):
             resources = p.run()
-        self.assertEqual(len(resources), 2)
+        self.assertEqual(len(resources), 1)
         for r in resources:
-            self.assertTrue(r['Date'])
-            self.assertTrue(r['OwnerId'])
+            self.assertTrue(r['c7n:ses-send-stats'][0]['Date'])
