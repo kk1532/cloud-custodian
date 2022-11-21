@@ -514,7 +514,7 @@ class TestRestStage(BaseTest):
             session_factory=factory,
         )
         resources = p.run()
-        self.assertEqual(len(resources), 0)
+        self.assertEqual(len(resources), 1)
 
     def test_waf(self):
         factory = self.replay_flight_data("test_rest_stage_waf")
@@ -574,7 +574,7 @@ class TestRestStage(BaseTest):
         self.assertEqual(len(resources), 1)
 
     def test_wafv2_to_wafregional(self):
-        factory = self.replay_flight_data("test_rest_stage_waf")
+        factory = self.replay_flight_data("test_rest_stage_wafv2")
         p = self.load_policy(
             {
                 "name": "waf-apigw",
@@ -585,7 +585,7 @@ class TestRestStage(BaseTest):
             session_factory=factory,
         )
         resources = p.run()
-        self.assertEqual(len(resources), 1)
+        self.assertEqual(len(resources), 2)
 
     def test_reststage_action_wafv2_not_found(self):
         self.assertRaises(
@@ -694,7 +694,7 @@ class TestRestStage(BaseTest):
             session_factory=factory,
         )
         resources = p.run()
-        self.assertEqual(len(resources), 1)
+        self.assertEqual(len(resources), 3)
 
     def test_set_wafv2_active_response(self):
         factory = self.replay_flight_data("test_rest_stage_wafv2")

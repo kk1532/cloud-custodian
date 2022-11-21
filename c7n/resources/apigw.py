@@ -704,7 +704,7 @@ class WafV2Enabled(Filter):
                 if r_web_acl_arn and r_web_acl_arn in target_acl_ids:
                     results.append(r)
             else:
-                if not r_web_acl_arn and r_web_acl_arn not in target_acl_ids:
+                if not r_web_acl_arn or r_web_acl_arn not in target_acl_ids:
                     results.append(r)
 
         return results
