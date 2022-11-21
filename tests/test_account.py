@@ -1412,8 +1412,4 @@ def test_fail_cloudtrail_include_management_events(test, cloudtrail_fail_include
         session_factory=session_factory
     )
     return_value = p.run()
-<<<<<<< HEAD
     test.assertEqual(len(return_value), 1)
-=======
-    test.assertEqual(len(return_value), 1)
->>>>>>> upstream/master
