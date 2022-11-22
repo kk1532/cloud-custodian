@@ -1066,7 +1066,15 @@ class AccountTests(BaseTest):
             config={'region': 'us-west-2'},
             session_factory=factory)
         resources = p.run()
+        expected_agg_send_stats = {
+            'DeliveryAttempts': 130,
+            'Bounces': 1,
+            'Complaints': 0,
+            'Rejects': 0,
+            'BounceRate': 1
+        }
         self.assertEqual(len(resources), 1)
+        self.assertEqual(resources[0]['c7n:ses-send-agg'], expected_agg_send_stats)
 
     def test_ses_consecutive_send_stats(self):
         factory = self.replay_flight_data('test_ses_agg_send_stats')
