@@ -1978,11 +1978,10 @@ class SesAggStats(ValueFilter):
                             'Rejects': 0,
                             'BounceRate': 0}
         for d in get_send_stats.get('SendDataPoints', []):
-            if d:
-                resource_counter['DeliveryAttempts'] += d['DeliveryAttempts']
-                resource_counter['Bounces'] += d['Bounces']
-                resource_counter['Complaints'] += d['Complaints']
-                resource_counter['Rejects'] += d['Rejects']
+            resource_counter['DeliveryAttempts'] += d['DeliveryAttempts']
+            resource_counter['Bounces'] += d['Bounces']
+            resource_counter['Complaints'] += d['Complaints']
+            resource_counter['Rejects'] += d['Rejects']
         resource_counter['BounceRate'] = round(
             (resource_counter['Bounces'] /
              resource_counter['DeliveryAttempts']) * 100)
@@ -1994,7 +1993,7 @@ class SesAggStats(ValueFilter):
 @filters.register('ses-send-stats')
 class SesConsecutiveStats(Filter):
     """This filter annotates the account resource with SES send statistics for the
-    last n number of days, not including the current date .
+    last n number of days, not including the current date.
 
     The stats are aggregated into daily metrics. Additionally, the filter also
     calculates and annotates the max daily bounce rate (percentage). Using this filter,
