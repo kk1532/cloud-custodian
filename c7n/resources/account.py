@@ -1994,7 +1994,7 @@ class SesAggStats(ValueFilter):
 @filters.register('ses-send-stats')
 class SesConsecutiveStats(Filter):
     """This filter annotates the account resource with SES send statistics for the
-    last n number of days.
+    last n number of days, not including the current date.
 
     The stats are aggregated into daily metrics. Additionally, the filter also
     calculates and annotates the max daily bounce rate (percentage). Using this filter,
@@ -2053,7 +2053,7 @@ class SesConsecutiveStats(Filter):
 
         max_bounce_rate = 0
         for ts, metric in metrics.items():
-            metric['BounceRate'] = (metric['Bounces'] / metric['DeliveryAttempts']) * 100
+            metric['BounceRate'] = round((metric['Bounces'] / metric['DeliveryAttempts']) * 100)
             if max_bounce_rate < metric['BounceRate']:
                 max_bounce_rate = metric['BounceRate']
             metric['Date'] = ts

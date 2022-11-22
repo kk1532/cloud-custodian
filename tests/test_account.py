@@ -1079,8 +1079,22 @@ class AccountTests(BaseTest):
         with mock_datetime_now(parser.parse("2022-10-26T00:00:00+00:00"), datetime):
             resources = p.run()
         self.assertEqual(len(resources), 1)
-        for r in resources:
-            self.assertEqual(r['c7n:ses-send-stats'][0]['Date'], "2022-10-25")
+        expected_send_stats = [{
+            'DeliveryAttempts': 17,
+            'Bounces': 1,
+            'Complaints': 0,
+            'Rejects': 0,
+            'BounceRate': 6,
+            'Date': '2022-10-25'}, {
+            'DeliveryAttempts': 20,
+            'Bounces': 0,
+            'Complaints': 0,
+            'Rejects': 0,
+            'BounceRate': 0,
+            'Date': '2022-10-24'}
+        ]
+        self.assertEqual(resources[0]['c7n:ses-send-stats'], expected_send_stats)
+        self.assertEqual(resources[0]['c7n:ses-max-bounce-rate'], 6)
 
 
 class AccountDataEvents(BaseTest):
