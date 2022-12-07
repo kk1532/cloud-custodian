@@ -899,6 +899,8 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
         token = event.get('resultToken')
         cfg_rule_name = event['configRuleName']
         ordering_ts = cfg_event['notificationCreationTime']
+        policy_data = self.policy.data.copy()
+        policy_data.pop("filters", None)
 
         matched_resources = set()
         unmatched_resources = set()
@@ -906,7 +908,7 @@ class ConfigPollRuleMode(LambdaMode, PullMode):
             matched_resources.add(r[resource_id])
         for r in self.policy.resource_manager.get_resource_manager(
                 self.policy.resource_type,
-                self.policy.data).resources():
+                policy_data).resources():
             if r[resource_id] not in matched_resources:
                 unmatched_resources.add(r[resource_id])
 
