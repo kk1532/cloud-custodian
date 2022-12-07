@@ -1382,15 +1382,15 @@ class TargetGroupAttributeFilterBase:
         client = local_session(self.manager.session_factory).client('elbv2')
 
         def _process_attributes(tg):
-            if 'Attributes' not in tg:
-                tg['Attributes'] = {}
+            if 'c7n:TargetGroupAttributes' not in tg:
+                tg['c7n:TargetGroupAttributes'] = {}
                 results = client.describe_target_group_attributes(
                     TargetGroupArn=tg['TargetGroupArn'])
                 # flatten out the list of dicts and cast
                 for pair in results['Attributes']:
                     k = pair['Key']
                     v = parse_attribute_value(pair['Value'])
-                    tg['Attributes'][k] = v
+                    tg['c7n:TargetGroupAttributes'][k] = v
 
         with self.manager.executor_factory(max_workers=2) as w:
             list(w.map(_process_attributes, tgs))
@@ -1426,7 +1426,7 @@ class TargetGroupCheckAttributes(ValueFilter, TargetGroupAttributeFilterBase):
         self.initialize(resources)
 
     def __call__(self, r):
-        return super().__call__(r['Attributes'])
+        return super().__call__(r['c7n:TargetGroupAttributes'])
 
 
 @AppELBTargetGroup.action_registry.register('modify-attributes')
@@ -1501,6 +1501,7 @@ class AppELBTargetGroupModifyAttributes(BaseAction):
 
     def process(self, resources):
         client = local_session(self.manager.session_factory).client('elbv2')
+        self.log.info(resources)
         for targetgroup in resources:
             self.manager.retry(
                 client.modify_target_group_attributes,

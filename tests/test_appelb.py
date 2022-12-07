@@ -1251,7 +1251,7 @@ class TestTargetGroupAttributesFilter(BaseTest):
         )
 
         self.assertEqual(
-            resources[0]['Attributes']['stickiness.type'], "source_ip"
+            resources[0]['c7n:TargetGroupAttributes']['stickiness.type'], "source_ip"
         )
 
     def test_tg_deregistration_delay_timeout_equal_300(self):
@@ -1279,5 +1279,5 @@ class TestTargetGroupAttributesFilter(BaseTest):
         )
 
         self.assertEqual(
-            resources[0]['Attributes']['deregistration_delay.timeout_seconds'], 300
+            resources[0]['c7n:TargetGroupAttributes']['deregistration_delay.timeout_seconds'], 300
         )
