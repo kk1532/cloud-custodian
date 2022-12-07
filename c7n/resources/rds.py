@@ -98,6 +98,7 @@ class RDS(QueryResourceManager):
         arn_separator = ':'
         enum_spec = ('describe_db_instances', 'DBInstances', None)
         id = 'DBInstanceIdentifier'
+        config_id = 'DbiResourceId'
         name = 'Endpoint.Address'
         filter_name = 'DBInstanceIdentifier'
         filter_type = 'scalar'
