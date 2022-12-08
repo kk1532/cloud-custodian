@@ -1443,7 +1443,7 @@ class AppELBTargetGroupModifyAttributes(BaseAction):
                 filters:
                   - type: attributes
                     key: "preserve_client_ip.enabled"
-                    value: True
+                    value: False
                 actions:
                   - type: modify-attributes
                     attributes:
