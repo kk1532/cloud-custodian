@@ -1,0 +1,76 @@
+{
+    "status_code": 200,
+    "data": {
+        "Images": [
+            {
+                "Architecture": "x86_64",
+                "CreationDate": "2022-12-03T04:03:21.000Z",
+                "ImageId": "ami-045e20ad788d52944",
+                "ImageLocation": "644160558196/test-image",
+                "ImageType": "machine",
+                "Public": false,
+                "OwnerId": "644160558196",
+                "PlatformDetails": "Linux/UNIX",
+                "UsageOperation": "RunInstances",
+                "State": "available",
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/xvda",
+                        "Ebs": {
+                            "DeleteOnTermination": true,
+                            "SnapshotId": "snap-0461acd47115df36f",
+                            "VolumeSize": 10,
+                            "VolumeType": "gp2",
+                            "Encrypted": true
+                        }
+                    }
+                ],
+                "EnaSupport": true,
+                "Hypervisor": "xen",
+                "Name": "test-image",
+                "RootDeviceName": "/dev/xvda",
+                "RootDeviceType": "ebs",
+                "SriovNetSupport": "simple",
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "testimage1"
+                    }
+                ],
+                "VirtualizationType": "hvm"
+            },
+            {
+                "Architecture": "x86_64",
+                "CreationDate": "2022-12-03T04:23:06.000Z",
+                "ImageId": "ami-0e79123d633419e8e",
+                "ImageLocation": "644160558196/noencryption-snapshot",
+                "ImageType": "machine",
+                "Public": false,
+                "OwnerId": "644160558196",
+                "PlatformDetails": "Linux/UNIX",
+                "UsageOperation": "RunInstances",
+                "State": "available",
+                "BlockDeviceMappings": [
+                    {
+                        "DeviceName": "/dev/xvda",
+                        "Ebs": {
+                            "DeleteOnTermination": true,
+                            "SnapshotId": "snap-08e2c0e1065250223",
+                            "VolumeSize": 8,
+                            "VolumeType": "gp2",
+                            "Encrypted": false
+                        }
+                    }
+                ],
+                "EnaSupport": true,
+                "Hypervisor": "xen",
+                "Name": "noencryption-snapshot",
+                "RootDeviceName": "/dev/xvda",
+                "RootDeviceType": "ebs",
+                "SriovNetSupport": "simple",
+                "VirtualizationType": "hvm"
+            }
+        ],
+        "ResponseMetadata": {}
+    }
+}

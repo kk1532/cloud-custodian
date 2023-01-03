@@ -17,7 +17,7 @@ from c7n.resources.ebs import (
     SnapshotQueryParser as QueryParser
 )
 
-from .common import BaseTest
+from .common import BaseTest, event_data
 
 
 class SnapshotQueryParse(BaseTest):
@@ -288,6 +288,28 @@ class SnapshotAmiSnapshotTest(BaseTest):
         )
         resources = policy.run()
         self.assertEqual(len(resources), 2)
+
+    def test_snapshot_ami_snapshot_config_filter(self):
+        factory = self.replay_flight_data("test_ebs_ami_snapshot_filter_config")
+        p = self.load_policy(
+            {
+                "name": "config-ebs-snapshot-skip-ami",
+                "resource": "ebs-snapshot",
+                "mode": {
+                    "type": "config-poll-rule",
+                    "role": "arn:aws:iam::{account_id}:role/MyRole",
+                    "schedule": "TwentyFour_Hours",
+                    "ignore-support-check": True
+                },
+                "filters": [{"type": "skip-ami-snapshots", "value": True}],
+            },
+            session_factory=factory,
+            config={"region": "us-west-2"},
+            validate=False
+        )
+        event = event_data('poll-evaluation.json', 'config')
+        results = p.push(event, None)
+        self.assertEqual(len(results), 2)
 
 
 class SnapshotUnusedTest(BaseTest):

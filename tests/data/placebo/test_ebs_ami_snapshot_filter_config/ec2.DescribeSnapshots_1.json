@@ -1,0 +1,94 @@
+{
+    "status_code": 200,
+    "data": {
+        "Snapshots": [
+            {
+                "Description": "Test Not encrypted",
+                "Encrypted": false,
+                "OwnerId": "644160558196",
+                "Progress": "100%",
+                "SnapshotId": "snap-0f63e67737c67c744",
+                "StartTime": {
+                    "__class__": "datetime",
+                    "year": 2023,
+                    "month": 1,
+                    "day": 3,
+                    "hour": 7,
+                    "minute": 52,
+                    "second": 19,
+                    "microsecond": 658000
+                },
+                "State": "completed",
+                "VolumeId": "vol-09ac50f7a4722e798",
+                "VolumeSize": 8,
+                "StorageTier": "standard"
+            },
+            {
+                "Description": "Created by CreateImage(i-06d13ef98f1375257) for ami-0e79123d633419e8e",
+                "Encrypted": false,
+                "OwnerId": "644160558196",
+                "Progress": "100%",
+                "SnapshotId": "snap-08e2c0e1065250223",
+                "StartTime": {
+                    "__class__": "datetime",
+                    "year": 2022,
+                    "month": 12,
+                    "day": 3,
+                    "hour": 4,
+                    "minute": 24,
+                    "second": 36,
+                    "microsecond": 733000
+                },
+                "State": "completed",
+                "VolumeId": "vol-09ac50f7a4722e798",
+                "VolumeSize": 8,
+                "StorageTier": "standard"
+            },
+            {
+                "Description": "Test encrypted",
+                "Encrypted": true,
+                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/918e885a-bc78-479d-ba6e-c219dd8c0530",
+                "OwnerId": "644160558196",
+                "Progress": "100%",
+                "SnapshotId": "snap-035ea4d38d01bd5ea",
+                "StartTime": {
+                    "__class__": "datetime",
+                    "year": 2022,
+                    "month": 12,
+                    "day": 3,
+                    "hour": 4,
+                    "minute": 4,
+                    "second": 33,
+                    "microsecond": 780000
+                },
+                "State": "completed",
+                "VolumeId": "vol-01f434f6bed046a73",
+                "VolumeSize": 10,
+                "StorageTier": "standard"
+            },
+            {
+                "Description": "Created by CreateImage(i-04k843afa610e3b15) for ami-045e20ad788d52944",
+                "Encrypted": true,
+                "KmsKeyId": "arn:aws:kms:us-west-2:644160558196:key/918e885a-bc78-479d-ba6e-c219dd8c0530",
+                "OwnerId": "644160558196",
+                "Progress": "100%",
+                "SnapshotId": "snap-0461acd47115df36f",
+                "StartTime": {
+                    "__class__": "datetime",
+                    "year": 2022,
+                    "month": 12,
+                    "day": 3,
+                    "hour": 4,
+                    "minute": 5,
+                    "second": 21,
+                    "microsecond": 651000
+                },
+                "State": "completed",
+                "VolumeId": "vol-01f434f6bed046a73",
+                "VolumeSize": 10,
+                "StorageTier": "standard"
+            }
+        ],
+        "ResponseMetadata": {}
+    }
+}

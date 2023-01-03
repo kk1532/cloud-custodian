@@ -53,6 +53,7 @@ class Snapshot(QueryResourceManager):
         filter_type = 'list'
         name = 'SnapshotId'
         date = 'StartTime'
+        cfn_type = config_type = "AWS::EC2::Volume"
 
         default_report_fields = (
             'SnapshotId',
