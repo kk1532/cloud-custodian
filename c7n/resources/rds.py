@@ -1609,6 +1609,7 @@ class ParameterFilter(ValueFilter):
     schema = type_schema('db-parameter', rinherit=ValueFilter.schema)
     schema_alias = False
     permissions = ('rds:DescribeDBInstances', 'rds:DescribeDBParameters', )
+    policy_annotation = 'c7n:MatchedDBParameter'
 
     @staticmethod
     def recast(val, datatype):
@@ -1635,7 +1636,15 @@ class ParameterFilter(ValueFilter):
 
         return ret_val
 
-    def handle_paramgroup_cache(self, client, paginator, param_groups):
+    # Private method for 'DBParameterGroupName' paginator
+    def _get_param_list(self, pg):
+        client = local_session(self.manager.session_factory).client('rds')
+        paginator = client.get_paginator('describe_db_parameters')
+        param_list = list(itertools.chain(*[p['Parameters']
+            for p in paginator.paginate(DBParameterGroupName=pg)]))
+        return param_list
+
+    def handle_paramgroup_cache(self, param_groups):
         pgcache = {}
         cache = self.manager._cache
 
@@ -1649,8 +1658,7 @@ class ParameterFilter(ValueFilter):
                 if pg_values is not None:
                     pgcache[pg] = pg_values
                     continue
-                param_list = list(itertools.chain(*[p['Parameters']
-                    for p in paginator.paginate(DBParameterGroupName=pg)]))
+                param_list = self._get_param_list(pg)
                 pgcache[pg] = {
                     p['ParameterName']: self.recast(p['ParameterValue'], p['DataType'])
                     for p in param_list if 'ParameterValue' in p}
@@ -1659,17 +1667,14 @@ class ParameterFilter(ValueFilter):
 
     def process(self, resources, event=None):
         results = []
-        client = local_session(self.manager.session_factory).client('rds')
-        paginator = client.get_paginator('describe_db_parameters')
-        param_groups = {db['DBParameterGroups'][0]['DBParameterGroupName']
-                        for db in resources}
-        paramcache = self.handle_paramgroup_cache(client, paginator, param_groups)
-
+        parameter_group_list = {db['DBParameterGroups'][0]['DBParameterGroupName']
+                    for db in resources}
+        paramcache = self.handle_paramgroup_cache(parameter_group_list)
         for resource in resources:
             for pg in resource['DBParameterGroups']:
                 pg_values = paramcache[pg['DBParameterGroupName']]
                 if self.match(pg_values):
-                    resource.setdefault('c7n:MatchedDBParameter', []).append(
+                    resource.setdefault(self.policy_annotation, []).append(
                         self.data.get('key'))
                     results.append(resource)
                     break
@@ -1977,3 +1982,72 @@ class RDSProxy(QueryResourceManager):
         'describe': DescribeDBProxy,
         'config': ConfigSource
     }
+
+
+@filters.register('db-option-groups')
+class DbOptionGroups(ValueFilter):
+    """This filter describes RDS option groups for associated RDS instances.
+
+    :example:
+
+    .. code-block:: yaml
+
+        policies:
+          - name: rds-data-in-transit-encrypted
+            resource: aws.rds
+            filters:
+              - type: db-option-groups
+                key: OptionName
+                value: NATIVE_NETWORK_ENCRYPTION
+                op: eq
+    """
+
+    schema = type_schema('db-option-groups', rinherit=ValueFilter.schema)
+    schema_alias = False
+    permissions = ('rds:DescribeDBInstances', 'rds:DescribeOptionGroups', )
+    policy_annotation = 'c7n:MatchedDBOptionGroups'
+
+    def handle_optiongroup_cache(self, client, paginator, option_groups):
+        pgcache = {}
+        cache = self.manager._cache
+
+        with cache:
+            for pg in option_groups:
+                cache_key = {
+                    'region': self.manager.config.region,
+                    'account_id': self.manager.config.account_id,
+                    'rds-pg': pg}
+                pg_values = cache.get(cache_key)
+                if pg_values is not None:
+                    pgcache[pg] = pg_values
+                    continue
+                option_list = list(itertools.chain(*[p['OptionGroupsList']
+                    for p in paginator.paginate(OptionGroupName=pg)]))
+
+                pgcache[pg] = {}
+                for option in option_list:
+                    if option['Options']:
+                        for p in option['Options']:
+                            pgcache[pg].update({'OptionName': p['OptionName']})
+                cache.save(cache_key, pgcache[pg])
+
+        return pgcache
+
+    def process(self, resources, event=None):
+        results = []
+        client = local_session(self.manager.session_factory).client('rds')
+        paginator = client.get_paginator('describe_option_groups')
+        option_groups = [db['OptionGroupMemberships'][0]['OptionGroupName']
+                        for db in resources]
+        optioncache = self.handle_optiongroup_cache(client, paginator, option_groups)
+
+        for resource in resources:
+            for pg in resource['OptionGroupMemberships']:
+                pg_values = optioncache[pg['OptionGroupName']]
+                if self.match(pg_values):
+                    resource.setdefault(self.policy_annotation, []).append({
+                        self.data.get('key'): self.data.get('value')})
+                    results.append(resource)
+                    break
+
+        return results
