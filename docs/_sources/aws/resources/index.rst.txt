@@ -170,7 +170,11 @@ be applies for all resources.
 
    group-route53.rst
 
+   group-route53-recovery-readiness.rst
+
    group-route53domains.rst
+
+   group-route53resolver.rst
 
    group-s3.rst
 
@@ -205,6 +209,8 @@ be applies for all resources.
    group-support.rst
 
    group-swf.rst
+
+   group-transfer.rst
 
    group-waf.rst
 

@@ -46,6 +46,8 @@ Filters
 
   - :ref:`ops-item <aws.common.filters.ops-item>`
   
+  - :ref:`organization <aws.account.filters.organization>`
+
   - :ref:`password-policy <aws.account.filters.password-policy>`
 
   - :ref:`reduce <aws.common.filters.reduce>`
@@ -55,6 +57,10 @@ Filters
   - :ref:`securityhub <aws.account.filters.securityhub>`
 
   - :ref:`service-limit <aws.account.filters.service-limit>`
+
+  - :ref:`ses-agg-send-stats <aws.common.filters.ses-agg-send-stats>`
+  
+  - :ref:`ses-send-stats <aws.account.filters.ses-send-stats>`
 
   - :ref:`shield-enabled <aws.account.filters.shield-enabled>`
 
@@ -1136,6 +1142,24 @@ Intended for use at a logical account/subscription/project level
 
 This works as an effectively an embedded policy thats evaluated.
 
+:example:
+
+Notify if an s3 bucket is missing
+
+.. code-block:: yaml
+
+        policies:
+          - name: missing-s3-bucket
+            resource: account
+            filters:
+              - type: missing
+                policy:
+                  resource: s3
+                  filters:
+                    - Name: my-bucket
+            actions:
+              - notify
+
 .. container:: toggle
 
   
@@ -1163,6 +1187,134 @@ This works as an effectively an embedded policy thats evaluated.
 
 
 
+
+
+.. _aws.account.filters.organization:
+
+organization
+++++++++++++
+Check organization enrollment and configuration
+
+:example:
+
+determine if an account is not in an organization
+
+.. code-block:: yaml
+
+  policies:
+    - name: no-org
+      resource: account
+      filters:
+        - type: organization
+          key: Id
+          value: absent
+
+
+:example:
+
+determine if an account is setup for organization policies
+
+.. code-block:: yaml
+
+   policies:
+     - name: org-policies-not-enabled
+       resource: account
+       filters:
+         - type: organization
+           key: FeatureSet
+           value: ALL
+           op: not-equal
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      default:
+        type: object
+      key:
+        type: string
+      op:
+        enum:
+        - eq
+        - equal
+        - ne
+        - not-equal
+        - gt
+        - greater-than
+        - ge
+        - gte
+        - le
+        - lte
+        - lt
+        - less-than
+        - glob
+        - regex
+        - regex-case
+        - in
+        - ni
+        - not-in
+        - contains
+        - difference
+        - intersect
+      type:
+        enum:
+        - organization
+      value:
+        oneOf:
+        - type: array
+        - type: string
+        - type: boolean
+        - type: number
+        - type: 'null'
+      value_from:
+        additionalProperties: 'False'
+        properties:
+          expr:
+            oneOf:
+            - type: integer
+            - type: string
+          format:
+            enum:
+            - csv
+            - json
+            - txt
+            - csv2dict
+          url:
+            type: string
+        required:
+        - url
+        type: object
+      value_regex:
+        type: string
+      value_type:
+        enum:
+        - age
+        - integer
+        - expiration
+        - normalize
+        - size
+        - cidr
+        - cidr_size
+        - swap
+        - resource_count
+        - expr
+        - unique_size
+        - date
+        - version
+    required:
+    - type
+
+
+
+
+Permissions - organizations:DescribeOrganization
 
 
 .. _aws.account.filters.password-policy:
@@ -1568,6 +1720,59 @@ advisor.  In this case, some of these checks have no results.
 Permissions - support:DescribeTrustedAdvisorCheckRefreshStatuses, support:DescribeTrustedAdvisorCheckResult, support:DescribeTrustedAdvisorChecks, support:RefreshTrustedAdvisorCheck
 
 
+.. _aws.account.filters.ses-send-stats:
+
+ses-send-stats
+++++++++++++++
+This filter annotates the account resource with SES send statistics for the
+last n number of days, not including the current date.
+
+The stats are aggregated into daily metrics. Additionally, the filter also
+calculates and annotates the max daily bounce rate (percentage). Using this filter,
+users can alert when the bounce rate for a particular day is higher than the limit.
+
+:example:
+
+.. code-block:: yaml
+
+        policies:
+          - name: ses-send-stats
+            resource: account
+            filters:
+              - type: ses-send-stats
+                days: 5
+              - type: value
+                key: '"c7n:ses-max-bounce-rate"'
+                op: ge
+                value: 10
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      days:
+        minimum: 2
+        type: number
+      type:
+        enum:
+        - ses-send-stats
+    required:
+    - days
+    - type
+
+
+
+
+Permissions - ses:GetSendStatistics
+
+
 .. _aws.account.filters.shield-enabled:
 
 shield-enabled
@@ -1688,6 +1893,8 @@ Actions
   - :ref:`set-shield-advanced <aws.account.actions.set-shield-advanced>`
 
   - :ref:`set-xray-encrypt <aws.account.actions.set-xray-encrypt>`
+
+  - :ref:`toggle-config-managed-rule <aws.account.actions.toggle-config-managed-rule>`
 
   - :ref:`webhook <aws.common.actions.webhook>`
   
@@ -2224,4 +2431,128 @@ Enable specific xray encryption.
 
 
 Permissions - xray:PutEncryptionConfig
+
+
+.. _aws.account.actions.toggle-config-managed-rule:
+
+toggle-config-managed-rule
+++++++++++++++++++++++++++
+Enables or disables an AWS Config Managed Rule
+
+:example:
+
+.. code-block:: yaml
+
+    policies:
+      - name: config-managed-s3-bucket-public-write-remediate-event
+        description: |
+          This policy detects if S3 bucket allows public write by the bucket policy
+          or ACL and remediates.
+        comment: |
+          This policy detects if S3 bucket policy or ACL allows public write access.
+          When the bucket is evaluated as 'NON_COMPLIANT', the action
+          'AWS-DisableS3BucketPublicReadWrite' is triggered and remediates.
+        resource: account
+        filters:
+          - type: missing
+            policy:
+              resource: config-rule
+              filters:
+                - type: remediation
+                  rule_name: &rule_name 'config-managed-s3-bucket-public-write-remediate-event'
+                  remediation: &remediation-config
+                    TargetId: AWS-DisableS3BucketPublicReadWrite
+                    Automatic: true
+                    MaximumAutomaticAttempts: 5
+                    RetryAttemptSeconds: 211
+                    Parameters:
+                      AutomationAssumeRole:
+                        StaticValue:
+                          Values:
+                            - 'arn:aws:iam::{account_id}:role/myrole'
+                      S3BucketName:
+                        ResourceValue:
+                          Value: RESOURCE_ID
+        actions:
+          - type: toggle-config-managed-rule
+            rule_name: *rule_name
+            managed_rule_id: S3_BUCKET_PUBLIC_WRITE_PROHIBITED
+            resource_types:
+              - 'AWS::S3::Bucket'
+            rule_parameters: '{}'
+            remediation: *remediation-config
+
+.. container:: toggle
+
+  
+
+  .. raw:: html
+     
+    <div class="header docutils container" style=""></div>
+
+  .. code-block:: yaml
+
+    properties:
+      enabled:
+        default: true
+        type: boolean
+      managed_rule_id:
+        type: string
+      remediation:
+        properties:
+          Automatic:
+            type: boolean
+          ExecutionControls:
+            type: object
+          MaximumAutomaticAttempts:
+            maximum: 25
+            minimum: 1
+            type: integer
+          Parameters:
+            type: object
+          RetryAttemptSeconds:
+            maximum: 2678000
+            minimum: 1
+            type: integer
+          TargetId:
+            type: string
+          TargetType:
+            type: string
+        type: object
+      resource_id:
+        type: string
+      resource_tag:
+        properties:
+          key:
+            type: string
+          value:
+            type: string
+        required:
+        - key
+        - value
+        type: object
+      resource_types:
+        items:
+          pattern: ^AWS::*
+          type: string
+        type: array
+      rule_name:
+        type: string
+      rule_parameters:
+        type: string
+      rule_prefix:
+        type: string
+      tags:
+        type: object
+      type:
+        enum:
+        - toggle-config-managed-rule
+    required:
+    - rule_name
+    - type
+
+
+
+
+Permissions - config:DescribeConfigRules, config:DescribeRemediationConfigurations, config:PutRemediationConfigurations, config:PutConfigRule
 
