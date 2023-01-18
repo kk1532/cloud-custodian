@@ -326,7 +326,7 @@ class EMRSecurityConfigurationFilter(ValueFilter):
     """
     annotation_key = 'c7n:SecurityConfiguration'
     permissions = ("elasticmapreduce:ListSecurityConfigurations",
-                   "elasticmapreduce:DescribeSecurityConfiguration")
+                   "elasticmapreduce:DescribeSecurityConfiguration",)
     schema = type_schema('security-configuration', rinherit=ValueFilter.schema)
     schema_alias = False
 
