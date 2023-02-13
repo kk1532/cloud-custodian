@@ -7,7 +7,7 @@ import jmespath
 
 from c7n.actions import ActionRegistry, BaseAction
 from c7n.exceptions import PolicyValidationError
-from c7n.filters import FilterRegistry, MetricsFilter, ValueFilter
+from c7n.filters import FilterRegistry, MetricsFilter
 from c7n.manager import resources
 from c7n.query import QueryResourceManager, TypeInfo, ConfigSource, DescribeSource
 from c7n.tags import universal_augment
@@ -305,50 +305,6 @@ class SecurityGroupFilter(net_filters.SecurityGroupFilter):
 
 
 filters.register('network-location', net_filters.NetworkLocation)
-
-
-@filters.register('security-configuration')
-class EMRSecurityConfigurationFilter(ValueFilter):
-    """Filter for annotate security configuration and
-       filter based on its attributes.
-
-    :example:
-
-    .. code-block:: yaml
-
-      policies:
-        - name: emr-security-configuration
-          resource: emr
-          filters:
-            - type: security-configuration
-              key: EnableAtRestEncryption
-              value: true
-
-    """
-    annotation_key = 'c7n:SecurityConfiguration'
-    permissions = ("elasticmapreduce:ListSecurityConfigurations",
-                   "elasticmapreduce:DescribeSecurityConfiguration",)
-    schema = type_schema('security-configuration', rinherit=ValueFilter.schema)
-    schema_alias = False
-
-    def process(self, resources, event=None):
-        results = []
-        emr_sec_cfgs = self.manager.get_resource_manager(
-            'emr-security-configuration').resources()
-        for r in resources:
-            if self.annotation_key not in r:
-                r[self.annotation_key] = dict()
-            if 'SecurityConfiguration' in r:
-                config_name = r['SecurityConfiguration']
-                for emr_sec_cfg in emr_sec_cfgs:
-                    if config_name in emr_sec_cfg['Name']:
-                        r[self.annotation_key] = \
-                            emr_sec_cfg['SecurityConfiguration']['EncryptionConfiguration']
-
-            if self.match(r[self.annotation_key]):
-                results.append(r)
-
-        return results
 
 
 @resources.register('emr-security-configuration')
