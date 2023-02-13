@@ -81,6 +81,7 @@ class HostedZone(Route53Base, QueryResourceManager):
         # detail_spec = ('get_hosted_zone', 'Id', 'Id', None)
         id = 'Id'
         name = 'Name'
+        config_id = 'HostedZoneId'
         universal_taggable = True
         # Denotes this resource type exists across regions
         global_resource = True
