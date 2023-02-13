@@ -81,7 +81,6 @@ class HostedZone(Route53Base, QueryResourceManager):
         # detail_spec = ('get_hosted_zone', 'Id', 'Id', None)
         id = 'Id'
         name = 'Name'
-        config_id = 'HostedZoneId'
         universal_taggable = True
         # Denotes this resource type exists across regions
         global_resource = True
@@ -93,11 +92,6 @@ class HostedZone(Route53Base, QueryResourceManager):
             _id = r[self.get_model().id].split("/")[-1]
             arns.append(self.generate_arn(_id))
         return arns
-
-    def augment(self, domains):
-        for d in domains:
-            d['HostedZoneId'] = d['Id'].split("/")[-1]
-        return domains
 
 
 HostedZone.filter_registry.register('shield-enabled', IsShieldProtected)
