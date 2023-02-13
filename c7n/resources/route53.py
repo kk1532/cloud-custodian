@@ -93,6 +93,11 @@ class HostedZone(Route53Base, QueryResourceManager):
             arns.append(self.generate_arn(_id))
         return arns
 
+    def augment(self, domains):
+        for d in domains:
+            d['HostedZoneId'] = d['Id'].split("/")[-1]
+        return domains
+
 
 HostedZone.filter_registry.register('shield-enabled', IsShieldProtected)
 HostedZone.action_registry.register('set-shield', SetShieldProtection)

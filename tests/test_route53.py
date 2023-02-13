@@ -37,6 +37,15 @@ class Route53HostedZoneTest(BaseTest):
             session_factory=session_factory,
         )
         self.assertEqual(p.run()[0]["Id"], "/hostedzone/XXXXURLYV5DGGG")
+        p = self.load_policy(
+            {
+                "name": "zone-verify-hostedzone-id",
+                "resource": "hostedzone",
+                "filters": [{"type": "shield-enabled", "state": False}],
+            },
+            session_factory=session_factory,
+        )
+        self.assertEqual(p.run()[0]["HostedZoneId"], "XXXXURLYV5DGGG")
 
     def test_route53_hostedzone_tag(self):
         session_factory = self.replay_flight_data("test_route53_hostedzone_tag")
