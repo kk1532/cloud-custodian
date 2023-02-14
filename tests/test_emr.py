@@ -175,7 +175,7 @@ class TestEMR(BaseTest):
                 "filters": [
                     {
                         "type": "security-configuration",
-                        "key": "EnableAtRestEncryption",
+                        "key": "EncryptionConfiguration.EnableAtRestEncryption",
                         "value": True
                     }
                 ],

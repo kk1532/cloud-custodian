@@ -333,21 +333,17 @@ class EMRSecurityConfigurationFilter(ValueFilter):
 
     def process(self, resources, event=None):
         results = []
-        emr_sec_cfgs = self.manager.get_resource_manager(
-            'emr-security-configuration').resources()
+        emr_sec_cfgs = {
+            cfg['Name']: cfg for cfg in self.manager.get_resource_manager(
+                'emr-security-configuration').resources()}
+
         for r in resources:
-            if self.annotation_key not in r:
-                r[self.annotation_key] = dict()
-            if 'SecurityConfiguration' in r:
-                config_name = r['SecurityConfiguration']
-                for emr_sec_cfg in emr_sec_cfgs:
-                    if config_name in emr_sec_cfg['Name']:
-                        r[self.annotation_key] = \
-                            emr_sec_cfg['SecurityConfiguration']['EncryptionConfiguration']
-
-            if self.match(r[self.annotation_key]):
+            if 'SecurityConfiguration' not in r:
+                continue
+            cfg = emr_sec_cfgs.get(r['SecurityConfiguration'], {})
+            if self.match(cfg):
+                r[self.annotation_key] = cfg
                 results.append(r)
-
         return results
 
 
