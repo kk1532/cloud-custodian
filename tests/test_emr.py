@@ -185,9 +185,11 @@ class TestEMR(BaseTest):
         )
         resources = p.run()
         self.assertEqual(len(resources), 1)
-        self.assertEqual(resources[0]
-                         ["c7n:SecurityConfiguration"]
-                         ["EnableAtRestEncryption"], True)
+        self.assertEqual(
+            resources[0]["c7n:SecurityConfiguration"],
+            {'EncryptionConfiguration': {'AtRestEncryptionConfiguration': {'S3EncryptionConfiguration': {'EncryptionMode': 'SSE-S3'}},
+                                         'EnableAtRestEncryption': True,
+                                         'EnableInTransitEncryption': False}})
 
 
 class TestEMRQueryFilter(unittest.TestCase):

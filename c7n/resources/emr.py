@@ -336,11 +336,10 @@ class EMRSecurityConfigurationFilter(ValueFilter):
         emr_sec_cfgs = {
             cfg['Name']: cfg for cfg in self.manager.get_resource_manager(
                 'emr-security-configuration').resources()}
-
         for r in resources:
             if 'SecurityConfiguration' not in r:
                 continue
-            cfg = emr_sec_cfgs.get(r['SecurityConfiguration'], {})
+            cfg = emr_sec_cfgs.get(r['SecurityConfiguration'], {}).get('SecurityConfiguration', {})
             if self.match(cfg):
                 r[self.annotation_key] = cfg
                 results.append(r)
