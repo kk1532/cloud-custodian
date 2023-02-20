@@ -81,7 +81,7 @@ class HostedZone(Route53Base, QueryResourceManager):
         # detail_spec = ('get_hosted_zone', 'Id', 'Id', None)
         id = 'Id'
         name = 'Name'
-        config_id = 'HostedZoneId'
+        config_id = 'c7n:ConfigHostedZoneId'
         universal_taggable = True
         # Denotes this resource type exists across regions
         global_resource = True
@@ -94,10 +94,13 @@ class HostedZone(Route53Base, QueryResourceManager):
             arns.append(self.generate_arn(_id))
         return arns
 
-    def augment(self, domains):
-        for d in domains:
-            d['HostedZoneId'] = d['Id'].split("/")[-1]
-        return domains
+    def augment(self, resources):
+        annotation_key = 'c7n:ConfigHostedZoneId'
+        resources = super(HostedZone, self).augment(resources)
+        for r in resources:
+            config_hzone_id = r['Id'].split("/")[-1]
+            r[annotation_key] = config_hzone_id
+        return resources
 
 
 HostedZone.filter_registry.register('shield-enabled', IsShieldProtected)

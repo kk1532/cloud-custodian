@@ -45,7 +45,7 @@ class Route53HostedZoneTest(BaseTest):
             },
             session_factory=session_factory,
         )
-        self.assertEqual(p.run()[0]["HostedZoneId"], "XXXXURLYV5DGGG")
+        self.assertEqual(p.run()[0]["c7n:ConfigHostedZoneId"], "XXXXURLYV5DGGG")
 
     def test_route53_hostedzone_tag(self):
         session_factory = self.replay_flight_data("test_route53_hostedzone_tag")
