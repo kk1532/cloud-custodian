@@ -208,7 +208,7 @@ class Route53DomainRemoveTag(RemoveTag):
                 TagsToDelete=keys)
 
 
-@ResourceRecordSet.action_registry.register('remove-recordset')
+@ResourceRecordSet.action_registry.register('delete')
 class ResourceRecordSetRemove(BaseAction):
     """Action to delete resource records from Route 53 hosted zones.
 
@@ -227,10 +227,10 @@ class ResourceRecordSetRemove(BaseAction):
                     key: AliasTarget.DNSName
                     value: "email.gc.example.com."
                 actions:
-                  - type: remove-recordset
+                  - type: delete
 
     """
-    schema = type_schema('remove-recordset',)
+    schema = type_schema('delete',)
     permissions = ('route53:ChangeResourceRecordSets',)
     keys = (
         'Name', 'Type', 'TTL', 'SetIdentifier', 'Region', 'AliasTarget', 'ResourceRecords')

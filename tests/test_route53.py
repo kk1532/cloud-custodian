@@ -302,7 +302,7 @@ class ResourceRecordSetTest(BaseTest):
                 'key': 'AliasTarget.DNSName',
                 'value': 'vpce-12345abcdefgh-mxpozkdy.us-west-2.vpce.amazonaws.com.',
                 }],
-            "actions": ["remove-recordset"]},
+            "actions": ["delete"]},
             session_factory=session_factory,
         )
         resources = p.run()
@@ -326,7 +326,7 @@ class ResourceRecordSetTest(BaseTest):
                 'op': 'intersect',
                 'value': ['mailserver01.subdomain.example.com.'],
                 }],
-            "actions": ["remove-recordset"]},
+            "actions": ["delete"]},
             session_factory=session_factory,
         )
         resources = p.run()
