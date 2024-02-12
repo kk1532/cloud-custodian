@@ -239,6 +239,8 @@ class ResourceRecordSetRemove(BaseAction):
         client = local_session(self.manager.session_factory).client('route53')
         try:
             for rrset in recordsets:
+
+                # Exempt the two zone associated mandatory records
                 if rrset['Type'] in ('NS', 'SOA'):
                     continue
 
