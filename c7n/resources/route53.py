@@ -231,7 +231,7 @@ class ResourceRecordSetRemove(BaseAction):
 
     """
     schema = type_schema('remove-recordset',)
-    permissions = ('route53:ChangeResourceRecordSetsActions',)
+    permissions = ('route53:ChangeResourceRecordSets',)
     keys = (
         'Name', 'Type', 'TTL', 'SetIdentifier', 'Region', 'AliasTarget', 'ResourceRecords')
 
