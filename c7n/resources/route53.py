@@ -71,6 +71,16 @@ def _describe_route53_tags(
         return list(w.map(process_tags, chunks(resources, 20)))
 
 
+def generate_rrset(recordset):
+    keys = (
+        'Name', 'Type', 'TTL', 'SetIdentifier', 'Region', 'AliasTarget', 'ResourceRecords')
+    rrset_payload = dict()
+    for key in keys:
+        if key in recordset:
+            rrset_payload.update({key: recordset[key]})
+    return rrset_payload
+
+
 @resources.register('hostedzone')
 class HostedZone(Route53Base, QueryResourceManager):
 
@@ -232,8 +242,6 @@ class ResourceRecordSetRemove(BaseAction):
     """
     schema = type_schema('delete',)
     permissions = ('route53:ChangeResourceRecordSets',)
-    keys = (
-        'Name', 'Type', 'TTL', 'SetIdentifier', 'Region', 'AliasTarget', 'ResourceRecords')
 
     def process(self, recordsets):
         client = local_session(self.manager.session_factory).client('route53')
@@ -244,7 +252,7 @@ class ResourceRecordSetRemove(BaseAction):
                 if rrset['Type'] in ('NS', 'SOA'):
                     continue
 
-                rrsetdata = self.generate_rrset(rrset)
+                rrsetdata = generate_rrset(rrset)
                 self.manager.retry(
                     client.change_resource_record_sets,
                     HostedZoneId=rrset['c7n:parent-id'],
@@ -260,13 +268,6 @@ class ResourceRecordSetRemove(BaseAction):
         except Exception as e:
                 self.log.warning(
                     "ResourceRecordSet delete error: %s", e)
-
-    def generate_rrset(self, recordset):
-        rrset_payload = dict()
-        for key in self.keys:
-            if key in recordset:
-                rrset_payload.update({key: recordset[key]})
-        return rrset_payload
 
 
 @HostedZone.action_registry.register('delete')
@@ -330,7 +331,7 @@ class Delete(BaseAction):
             # Exempt the two zone associated mandatory records
             if rrset['Name'] == hz['Name'] and rrset['Type'] in ('NS', 'SOA'):
                 continue
-            rrsetdata = self.generate_rrset(rrset)
+            rrsetdata = generate_rrset(rrset)
             self.manager.retry(
                 client.change_resource_record_sets,
                 HostedZoneId=hz['Id'],
@@ -343,13 +344,6 @@ class Delete(BaseAction):
                     ]
                 },
                 ignore_err_codes=('InvalidChangeBatch'))
-
-    def generate_rrset(self, recordset):
-        rrset_payload = dict()
-        for key in self.keys:
-            if key in recordset:
-                rrset_payload.update({key: recordset[key]})
-        return rrset_payload
 
 
 @HostedZone.action_registry.register('set-query-logging')
